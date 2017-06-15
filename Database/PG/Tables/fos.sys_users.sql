@@ -76,10 +76,10 @@ comment on column fos.sys_users.operator is 'ФИО оператора';
 comment on column fos.sys_users.active_flag is 'Признак активности, 0 - не активен, 1 (default) - активен';
 comment on column fos.sys_users.description is 'Описание';
 comment on column fos.sys_users.comments is 'Коменты';
-comment on column fos.sys_users.change_user is 'Изменил';
-comment on column fos.sys_users.change_date is 'Изменили';
-comment on column fos.sys_users.change_term is 'Терминал';
-comment on column fos.sys_users.change_user_id is 'Пользователь';
+comment on column fos.sys_users.cu is 'Изменил';
+comment on column fos.sys_users.cd is 'Изменили';
+comment on column fos.sys_users.ct is 'Терминал';
+comment on column fos.sys_users.cu_id is 'Пользователь';
 
 /*  
 -- SQL запросы
