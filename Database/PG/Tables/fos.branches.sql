@@ -8,6 +8,7 @@
 Change list:
 04.05.2017 Перепечко А.В. Переносим на PG
 14.05.2017 Перепечко А.В. Приводим к единому виду обязательных атрибутов (id, descr, comm, cu, cd, ct, cu_id)
+25.06.2017 Перепечко А.В. Укорачиваем наименования служебных колонок
 */
 /* Удаляем, если есть */
 --if OBJECT_ID( 'dbo.branches', 'U') is NOT NULL
@@ -15,13 +16,13 @@ Change list:
 drop table fos.branches cascade;
 /*
     Атрибуты:
-        id          - Уникальный идентификатор экземпляра
-        country_id  - Ссылка на страну
-        city_id     - Ссылка на город
+        id              - Уникальный идентификатор экземпляра
+        country_id      - Ссылка на страну
+        city_id         - Ссылка на город
         nat_currency_id - Ссылка на НВ (национальная валюта)
-        name        - Наименование филиала
-        description - Описание
-        comments    - Коментарии
+        name            - Наименование филиала
+        description     - Описание
+        comments        - Коментарии
 */
 create table fos.branches
 (
@@ -34,15 +35,15 @@ create table fos.branches
     description     varchar(500)    NULL,
     comments        varchar(1000)   NULL,
     -- system info
-    change_user     varchar(256)    NOT NULL default session_user,
-    change_date     timestamp       NOT NULL default current_timestamp,
-    change_term     varchar(256)    NOT NULL default inet_client_addr(),
-    change_user_id  bigint          NULL,
+    cu              varchar(256)    NOT NULL default session_user,
+    cd              timestamp       NOT NULL default current_timestamp,
+    ct              varchar(256)    NOT NULL default inet_client_addr(),
+    cu_id           bigint          NULL,
     -- constraints ---------------------------------------------
     constraint branches_pk primary key (id),
     constraint branches_fk_country foreign key (country_id) references fos.dict_countries(id),
     constraint branches_fk_city foreign key ( city_id) references fos.dict_cities(id),
-    constraint branches_fk_cu_id foreign key( change_user_id) references fos.sys_users( id),
+    constraint branches_fk_cu_id foreign key( cu_id) references fos.sys_users( id),
     constraint branches_uk_code unique ( code)
 )
 ;
@@ -60,10 +61,10 @@ comment on column fos.branches.code is 'Код';
 comment on column fos.branches.name is 'Наименование';
 comment on column fos.branches.description is 'Описание';
 comment on column fos.branches.comments is 'Коменты';
-comment on column fos.branches.change_user is 'Изменил';
-comment on column fos.branches.change_date is 'Изменили';
-comment on column fos.branches.change_term is 'Терминал';
-comment on column fos.branches.change_user_id is 'Пользователь';
+comment on column fos.branches.cu is 'Изменил';
+comment on column fos.branches.cd is 'Изменили';
+comment on column fos.branches.ct is 'Терминал';
+comment on column fos.branches.cu_id is 'Пользователь';
 
 /*  
 -- SQL запросы 

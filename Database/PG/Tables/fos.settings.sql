@@ -9,6 +9,7 @@ Change list:
 04.05.2017 Перепечко А.В. Добиваем недостающие столбцы
 14.05.2017 Перепечко А.В. Приводим к единому виду обязательных атрибутов (id, descr, comm, cu, cd, ct, cu_id)
 14.05.2017 Перепечко А.В. Переносим на PG
+25.06.2017 Перепечко А.В. Укорачиваем наименования служебных колонок
 */
 /* Удаляем, если есть */
 --if OBJECT_ID( 'dbo.settings', 'U') is NOT NULL
@@ -23,10 +24,10 @@ drop table fos.settings cascade;
         value           - Значение
         description     - Описание
         comments        - Коментарии
-        change_user     - Последний изменивший
-        change_date     - Последняя дата изменений
-        change_term     - Терминал
-        change_user_id  - Пользователь
+        cu              - Последний изменивший
+        cd              - Последняя дата изменений
+        ct              - Терминал
+        cu_id           - Пользователь
 */
 create table fos.settings
 (
@@ -41,13 +42,13 @@ create table fos.settings
     description     varchar(500)    NULL,
     comments        varchar(1000)   NULL,
     -- system info
-    change_user     varchar(256)    NOT NULL default session_user,
-    change_date     timestamp       NOT NULL default current_timestamp,
-    change_term     varchar(256)    NOT NULL default inet_client_addr(),
-    change_user_id  bigint          NULL,
+    cu              varchar(256)    NOT NULL default session_user,
+    cd              timestamp       NOT NULL default current_timestamp,
+    ct              varchar(256)    NOT NULL default inet_client_addr(),
+    cu_id           bigint          NULL,
     -- constraints ---------------------------------------------
     constraint settings_pk primary key (id),
-    constraint settings_fk_cu_id foreign key ( change_user_id) references fos.sys_users( id),
+    constraint settings_fk_cu_id foreign key ( cu_id) references fos.sys_users( id),
     constraint settings_fk_branch foreign key (branch_id) references fos.branches(id),
     constraint settings_uk_code unique ( branch_id, code)
 )
@@ -65,10 +66,10 @@ comment on column fos.settings.name is 'Наименование';
 comment on column fos.settings.value is 'Значение';
 comment on column fos.settings.description is 'Описание';
 comment on column fos.settings.comments is 'Коменты';
-comment on column fos.settings.change_user is 'Крайний изменивший';
-comment on column fos.settings.change_date is 'Крайняя дата изменений';
-comment on column fos.settings.change_term is 'Терминал';
-comment on column fos.settings.change_user_id is 'Пользователь';
+comment on column fos.settings.cu is 'Крайний изменивший';
+comment on column fos.settings.cd is 'Крайняя дата изменений';
+comment on column fos.settings.ct is 'Терминал';
+comment on column fos.settings.cu_id is 'Пользователь';
 
 /*  
 -- SQL запросы

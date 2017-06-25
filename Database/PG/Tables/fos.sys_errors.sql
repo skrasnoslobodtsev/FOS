@@ -8,6 +8,7 @@
 Change list:
 04.05.2017 Перепечко А.В. Переносим на PG
 14.05.2017 Перепечко А.В. Приводим к единому виду обязательных атрибутов (id, descr, comm, cu, cd, ct, cu_id)
+25.06.2017 Перепечко А.В. Укорачиваем наименования служебных колонок
 */
 /* Удаляем, если есть */
 --if OBJECT_ID( 'dbo.sys_errors', 'U') is NOT NULL
@@ -27,10 +28,10 @@ drop table fos.sys_errors cascade;
         description     - Описание
         comments        - Коментарии
         --
-        chnage_user    - Последний изменивший
-        change_date    - Последнее изменение
-        change_term    - Терминал
-        change_user_id - Ссылка на пользователя системы
+        cu              - Последний изменивший
+        cd              - Последнее изменение
+        ct              - Терминал
+        cu_id           - Ссылка на пользователя системы
 */
 create table fos.sys_errors
 (
@@ -43,17 +44,17 @@ create table fos.sys_errors
     -- системные
     description         varchar(500)    NULL,
     comments            varchar(1000)   NULL,
-    change_user         varchar(256)    NOT NULL default session_user,
-    change_date         timestamp       NOT NULL default current_timestamp,
-    change_term         varchar(256)    NOT NULL default inet_client_addr(),
-    change_user_id      bigint          NULL,
+    cu                  varchar(256)    NOT NULL default session_user,
+    cd                  timestamp       NOT NULL default current_timestamp,
+    ct                  varchar(256)    NOT NULL default inet_client_addr(),
+    cu_id               bigint          NULL,
     -- Ограничения
     constraint sys_errors_pk
         primary key ( id),
     constraint sys_errors_uk
         unique ( error_code),
     constraint sys_errors_fk_cu_id
-        foreign key( change_user_id) references fos.sys_users( id)
+        foreign key( cu_id) references fos.sys_users( id)
 );
 -- Создаём уникальный индекс на поле error_code
 create index sys_errors_idx on fos.sys_errors( error_code desc);
@@ -70,10 +71,10 @@ comment on column fos.sys_errors.error_message is 'Сообщение';
 comment on column fos.sys_errors.fmt_error_message is 'Форматированное сообщение';
 comment on column fos.sys_errors.description is 'Описание';
 comment on column fos.sys_errors.comments is 'Коменты';
-comment on column fos.sys_errors.change_user is 'Изменил';
-comment on column fos.sys_errors.change_date is 'Изменили';
-comment on column fos.sys_errors.change_term is 'Терминал';
-comment on column fos.sys_errors.change_user_id is 'Ссылка на юзверя';
+comment on column fos.sys_errors.cu is 'Изменил';
+comment on column fos.sys_errors.cd is 'Изменили';
+comment on column fos.sys_errors.ct is 'Терминал';
+comment on column fos.sys_errors.cu_id is 'Ссылка на юзверя';
 
 /*  
 -- SQL запросы 

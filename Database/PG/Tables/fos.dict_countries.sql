@@ -8,6 +8,7 @@
 Chnage list:
 04.05.2017 Перепечко А.В. Переносим на PG
 14.05.2017 Перепечко А.В. Приводим к единому виду обязательных атрибутов (id, descr, comm, cu, cd, ct, cu_id)
+25.06.2017 Перепечко А.В. Укорачиваем наименования служебных колонок
 */
 /* Удаляем, если есть */
 --if OBJECT_ID( 'dbo.dict_countries', 'U') is NOT NULL
@@ -24,10 +25,10 @@ drop table fos.dict_countries cascade;
         comments        - Коментарии
         code            - Код
         -- Системные
-        change_user     - Последний изменивший
-        change_date     - Дата изменения
-        change_term     - Терминал
-        change_user_id  - Ссылка на пользователя
+        cu              - Последний изменивший
+        cd              - Дата изменения
+        ct              - Терминал
+        cu_id           - Ссылка на пользователя
 */
 create table fos.dict_countries
 (
@@ -40,14 +41,14 @@ create table fos.dict_countries
     description         varchar(500)    NOT NULL,
     comments            varchar(1000)   NULL,
     -- ------
-    change_user         varchar(256)    NOT NULL default session_user,
-    change_date         timestamp       NOT NULL default current_timestamp,
-    change_term         varchar(256)    NOT NULL default inet_client_addr(),
-    change_user_id      bigint          NULL,
+    cu                  varchar(256)    NOT NULL default session_user,
+    cd                  timestamp       NOT NULL default current_timestamp,
+    ct                  varchar(256)    NOT NULL default inet_client_addr(),
+    cu_id               bigint          NULL,
     -- --------------------------------------
     constraint dict_countries_pk primary key (id),
     constraint dict_countries_uk unique (code_3),
-    constraint dict_countries_fk_cu_id foreign key( change_user_id) references fos.sys_users( id)
+    constraint dict_countries_fk_cu_id foreign key( cu_id) references fos.sys_users( id)
 )
 ;
 
@@ -68,12 +69,19 @@ comment on column fos.dict_countries.code_3 is 'Код 3 буквы';
 comment on column fos.dict_countries.code_number is 'Код цифры';
 comment on column fos.dict_countries.description is 'Описание';
 comment on column fos.dict_countries.comments is 'Коментарии';
-comment on column fos.dict_countries.change_user is 'Изменил';
-comment on column fos.dict_countries.change_date is 'Изменили';
-comment on column fos.dict_countries.change_term is 'Терминал';
-comment on column fos.dict_countries.change_user_id is 'Пользователь';
+comment on column fos.dict_countries.cu is 'Изменил';
+comment on column fos.dict_countries.cd is 'Изменили';
+comment on column fos.dict_countries.ct is 'Терминал';
+comment on column fos.dict_countries.cu_id is 'Пользователь';
 
-/*  
+/*
+
+select
+    *
+from
+    fos.dict_countries
+;
+
 -- SQL запросы
 select
   ErrorCode,

@@ -8,6 +8,7 @@
 Change list:
 05.05.2017 Перепечко А.В. Переносим на PG
 14.05.2017 Перепечко А.В. Приводим к единому виду обязательных атрибутов (id, descr, comm, cu, cd, ct, cu_id)
+25.06.2017 Перепечко А.В. Укорачиваем наименования служебных колонок
 */
 /* Удаляем, если есть */
 --if OBJECT_ID( 'dbo.dict_enum_item_values', 'U') is NOT NULL
@@ -23,10 +24,10 @@ drop table fos.dict_enum_item_values cascade;
         value           - Значение
         description     - Описание
         comments        - Коментарии
-        change_user     - Последний изменивший
-        change_date     - Последняя дата изменений
-        chnage_term     - Терминал
-        change_user_id  - Ссылка на пользователя
+        cu              - Последний изменивший
+        cd              - Последняя дата изменений
+        ct              - Терминал
+        cu_id           - Ссылка на пользователя
 */
 create table fos.dict_enum_item_values
 (
@@ -42,15 +43,15 @@ create table fos.dict_enum_item_values
     description         varchar(500)    NULL,
     comments            varchar(1000)   NULL,
     -- system info
-    change_user         varchar(256)    NOT NULL default session_user,
-    change_date         timestamp       NOT NULL default current_timestamp,
-    change_term         varchar(256)    NOT NULL default inet_client_addr(),
-    change_user_id      bigint          NULL,
+    cu                  varchar(256)    NOT NULL default session_user,
+    cd                  timestamp       NOT NULL default current_timestamp,
+    ct                  varchar(256)    NOT NULL default inet_client_addr(),
+    cu_id               bigint          NULL,
     -- constraints ---------------------------------------------
     constraint dict_enum_item_values_pk primary key (id),
     constraint dict_enum_item_values_fk_dict_item foreign key (dict_enum_item_id) references fos.dict_enum_items(id),
     constraint dict_enum_item_values_fk_branch foreign key (branch_id) references fos.branches( id),
-    constraint dict_enum_item_values_fk_cu_id foreign key( change_user_id) references fos.sys_users( id),
+    constraint dict_enum_item_values_fk_cu_id foreign key( cu_id) references fos.sys_users( id),
     constraint dict_enum_item_values_uk_code unique ( dict_enum_item_id, code, branch_id)
 )
 ;
@@ -68,10 +69,10 @@ comment on column fos.dict_enum_item_values.name is 'Наименование';
 comment on column fos.dict_enum_item_values.value is 'Значение';
 comment on column fos.dict_enum_item_values.description is 'Описание';
 comment on column fos.dict_enum_item_values.comments is 'Коменты';
-comment on column fos.dict_enum_item_values.change_user is 'Крайний изменивший';
-comment on column fos.dict_enum_item_values.change_date is 'Крайняя дата изменения';
-comment on column fos.dict_enum_item_values.change_term is 'Терминал';
-comment on column fos.dict_enum_item_values.change_user_id is 'Пользователь';
+comment on column fos.dict_enum_item_values.cu is 'Крайний изменивший';
+comment on column fos.dict_enum_item_values.cd is 'Крайняя дата изменения';
+comment on column fos.dict_enum_item_values.ct is 'Терминал';
+comment on column fos.dict_enum_item_values.cu_id is 'Пользователь';
 
 /*  
 -- SQL запросы

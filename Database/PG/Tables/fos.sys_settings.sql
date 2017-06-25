@@ -23,10 +23,10 @@ drop table fos.sys_settings cascade;
         value           - Значение
         description     - Описание
         comments        - Коментарии
-        change_user     - Последний изменивший
-        change_date     - Последняя дата изменений
-        change_term     - Терминал
-        change_user_id  - Ссылка на пользователя
+        cu     - Последний изменивший
+        cd     - Последняя дата изменений
+        ct     - Терминал
+        cu_id  - Ссылка на пользователя
 */
 create table fos.sys_settings
 (
@@ -39,14 +39,14 @@ create table fos.sys_settings
     description     varchar(1000) NULL,
     comments        varchar(2000) NULL,
     -- system info
-    change_user     varchar(256)   NOT NULL default session_user,
-    change_date     timestamp      NOT NULL default current_timestamp,
-    change_term     varchar(256)   NOT NULL default inet_client_addr(),
-    change_user_id  bigint         NULL,
+    cu              varchar(256)   NOT NULL default session_user,
+    cd              timestamp      NOT NULL default current_timestamp,
+    ct              varchar(256)   NOT NULL default inet_client_addr(),
+    cu_id           bigint         NULL,
     -- constraints ---------------------------------------------
     constraint sys_settings_pk primary key(id),
     constraint sys_settings_uk_code unique ( code),
-    constraint sys_settings_fk_cu_id foreign key( change_user_id) references fos.sys_users( id)
+    constraint sys_settings_fk_cu_id foreign key( cu_id) references fos.sys_users( id)
 )
 ;
 
@@ -61,10 +61,10 @@ comment on column fos.sys_settings.name is 'Наименование';
 comment on column fos.sys_settings.value is 'Значение';
 comment on column fos.sys_settings.description is 'Описание';
 comment on column fos.sys_settings.comments is 'Коментарии';
-comment on column fos.sys_settings.change_user is 'Изменил';
-comment on column fos.sys_settings.change_date is 'Изменили';
-comment on column fos.sys_settings.change_term is 'Терминал';
-comment on column fos.sys_settings.change_user_id is 'Пользователь';
+comment on column fos.sys_settings.cu is 'Изменил';
+comment on column fos.sys_settings.cd is 'Изменили';
+comment on column fos.sys_settings.ct is 'Терминал';
+comment on column fos.sys_settings.cu_id is 'Пользователь';
 
 /*  
 -- SQL запросы

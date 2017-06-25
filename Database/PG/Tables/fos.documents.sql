@@ -11,6 +11,7 @@ Change list:
 10.03.2017 Перепечко А.В. Дорабатываем базовый набор атрибутов
 21.05.2017 Перепечко А.В. Приводим к единому виду обязательных атрибутов (id, descr, comm, cu, cd, ct, cu_id)
 21.05.2017 Перепечко А.В. Переносим на pg
+25.06.2017 Перепечко А.В. Укорачиваем наименования служебных колонок
 */
 --if OBJECT_ID( 'dbo.[documents]', 'U') is NOT NULL
 --    drop table dbo.[documents];
@@ -31,10 +32,10 @@ drop table fos.documents cascade;
         description         - Описание
         comments            - Коменты
         -- Системные
-        change_user         - Пользователь
-        chnage_date         - Дата последнего изменения
-        change_term         - Терминал
-        change_user_id      - Ссылка на юзверя
+        cu                  - Пользователь
+        cd                  - Дата последнего изменения
+        ct                  - Терминал
+        cu_id               - Ссылка на юзверя
 */
 create table fos.documents
 (
@@ -50,25 +51,24 @@ create table fos.documents
     -- description and comments    
     description         varchar(500)    NULL,
     comments            varchar(1000)   NULL,
-    -- constraints ---------------------------------------------
 
     -- system info
-    create_user         varchar(256)    NOT NULL default session_user,
-    create_date         timestamp       NOT NULL default current_timestamp,
-    create_term         varchar(256)    NOT NULL default inet_client_addr(),
-    create_user_id      bigint          NULL,
-    change_user         varchar(256)    NOT NULL default session_user,
-    change_date         timestamp       NOT NULL default current_timestamp,
-    change_term         varchar(256)    NOT NULL default inet_client_addr(),
-    change_user_id      bigint          NULL,
-    -- Ограничения
+    cru                 varchar(256)    NOT NULL default session_user,
+    crd                 timestamp       NOT NULL default current_timestamp,
+    crt                 varchar(256)    NOT NULL default inet_client_addr(),
+    cru_id              bigint          NULL,
+    cu                  varchar(256)    NOT NULL default session_user,
+    cd                  timestamp       NOT NULL default current_timestamp,
+    ct                  varchar(256)    NOT NULL default inet_client_addr(),
+    cu_id               bigint          NULL,
+    -- constraints ---------------------------------------------
     constraint documents_pk primary key ( id),
     -- Ссылки
     constraint documents_fk_owners foreign key ( owner_id) references fos.documents( id),
     constraint documents_fk_branches foreign key ( branch_id) references fos.branches( id),
     constraint documents_fk_types foreign key( type_id) references fos.dict_enum_items( id),
-    constraint documents_fk_cru_id foreign key( create_user_id) references fos.sys_users( id),
-    constraint documents_fk_chu_id foreign key( change_user_id) references fos.sys_users( id)
+    constraint documents_fk_cru_id foreign key( cru_id) references fos.sys_users( id),
+    constraint documents_fk_chu_id foreign key( cu_id) references fos.sys_users( id)
 )
 ;
 

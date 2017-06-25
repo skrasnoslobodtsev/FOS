@@ -8,6 +8,7 @@
 Change list:
 04.05.2017 Перепечко А.В. Переносим на PG
 14.05.2017 Перепечко А.В. Приводим к единому виду обязательных атрибутов (id, descr, comm, cu, cd, ct, cu_id)
+25.06.2017 Перепечко А.В. Укорачиваем наименования служебных колонок
 */
 /* Удаляем, если есть */
 --if OBJECT_ID( 'dbo.dict_currencies', 'U') is NOT NULL
@@ -24,10 +25,10 @@ drop table fos.dict_currencies cascade;
         code            - Код
         description     - Описание
         comments        - Коментарии
-        change_user     - Последний изменивший
-        change_date     - Последняя дата изменений
-        change_term     - Терминал
-        change_user_id  - Ссылка на пользователя
+        cu              - Последний изменивший
+        cd              - Последняя дата изменений
+        ct              - Терминал
+        cu_id           - Ссылка на пользователя
 */
 create table fos.dict_currencies
 (
@@ -41,16 +42,16 @@ create table fos.dict_currencies
     description         varchar(500)    NULL,
     comments            varchar(1000)   NULL,
     -- ---
-    change_user         varchar(256)    NOT NULL default session_user,
-    change_date         timestamp       NOT NULL default current_timestamp,
-    change_term         varchar(256)    NOT NULL default inet_client_addr(),
-    change_user_id      bigint          NULL,
+    cu                  varchar(256)    NOT NULL default session_user,
+    cd                  timestamp       NOT NULL default current_timestamp,
+    ct                  varchar(256)    NOT NULL default inet_client_addr(),
+    cu_id               bigint          NULL,
     -- ---------------------------------------------------------
     constraint dict_currencies_pk primary key(id),
     constraint dict_currencies_uk_iso unique(iso_code),
     constraint dict_currencies_uk_num unique(num_code),
     constraint dict_currencies_uk_code unique( code),
-    constraint dict_currencies_fk_cu_id foreign key( change_user_id) references fos.sys_users( id)
+    constraint dict_currencies_fk_cu_id foreign key( cu_id) references fos.sys_users( id)
 )
 ;
 
@@ -71,10 +72,10 @@ comment on column fos.dict_currencies.sign is 'Обозначение';
 comment on column fos.dict_currencies.country_name is 'Наименование страны';
 comment on column fos.dict_currencies.description is 'Описание';
 comment on column fos.dict_currencies.comments is 'Коментарии';
-comment on column fos.dict_currencies.change_user is 'Изменил';
-comment on column fos.dict_currencies.change_date is 'Изменили';
-comment on column fos.dict_currencies.change_term is 'Терминал';
-comment on column fos.dict_currencies.change_user_id is 'Пользователь';
+comment on column fos.dict_currencies.cu is 'Изменил';
+comment on column fos.dict_currencies.cd is 'Изменили';
+comment on column fos.dict_currencies.ct is 'Терминал';
+comment on column fos.dict_currencies.cu_id is 'Пользователь';
 /*  
 -- SQL запросы
 select

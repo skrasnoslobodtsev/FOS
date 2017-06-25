@@ -8,6 +8,7 @@
 Change list:
 09.03.2017 Перепечко А.В. Замена dbo.dicts на dbo.dict_enums
 05.05.2017 Перепечко А.В. Переносим на PG
+25.06.2017 Перепечко А.В. Укорачиваем наименования служебных колонок
 */
 /* Удаляем, если есть */
 --if OBJECT_ID( 'dbo.dict_rates', 'U') is NOT NULL
@@ -25,19 +26,19 @@ drop table fos.dict_rates cascade;
         rate_date       - Дата курса
         description     - Описание
         comments        - Коментарии
-        change_user     - Последний изменивший
-        change_date     - Последняя дата изменений
-        change_term     - Терминал
-        change_user_id  - Ссылка на пользователя
+        cu              - Последний изменивший
+        cd              - Последняя дата изменений
+        ct              - Терминал
+        cu_id           - Ссылка на пользователя
 */
 create table fos.dict_rates
 (
-    id                  int             NOT NULL,
+    id                  bigint          NOT NULL,
     -- fk here
-    source_id           int             NOT NULL,
-    branch_id           int             NULL,
-    base_currency_id    int             NULL,
-    currency_id         int             NOT NULL,
+    source_id           bigint          NOT NULL,
+    branch_id           bigint          NULL,
+    base_currency_id    bigint          NULL,
+    currency_id         bigint          NOT NULL,
     
     -- attributes
     rate                float           NOT NULL default 1.0,
@@ -48,15 +49,15 @@ create table fos.dict_rates
     description         varchar(500)    NULL,
     comments            varchar(1000)   NULL,
     -- system info
-    change_user         varchar(256)    NOT NULL default session_user,
-    change_date         timestamp       NOT NULL default current_timestamp,
-    change_term         varchar(256)    NOT NULL default inet_client_addr(),
-    change_user_id      int             NULL,
+    cu                  varchar(256)    NOT NULL default session_user,
+    cd                  timestamp       NOT NULL default current_timestamp,
+    ct                  varchar(256)    NOT NULL default inet_client_addr(),
+    cu_id               bigint          NULL,
     -- constraints ---------------------------------------------
     constraint dict_rates_pk primary key (id),
     constraint dict_rates_fk_source foreign key ( source_id) references fos.dict_enum_items( id),
     constraint dict_rates_fk_branch foreign key( branch_id) references fos.branches( id),
-    constraint dict_rates_fk_user_id foreign key( change_user_id) references fos.sys_users( id),
+    constraint dict_rates_fk_user_id foreign key( cu_id) references fos.sys_users( id),
     constraint dict_rates_fk_base_currency foreign key( base_currency_id) references fos.dict_currencies( id),
     constraint dict_rates_fk_currency foreign key( currency_id) references fos.dict_currencies( id),
     constraint dict_rates_uk unique( source_id, branch_id, base_currency_id, currency_id, rate_date)
@@ -78,10 +79,10 @@ comment on column fos.dict_rates.multiplier is 'Множитель';
 comment on column fos.dict_rates.rate_date is 'Дата курса';
 comment on column fos.dict_rates.description is 'Описание';
 comment on column fos.dict_rates.comments is 'Коменты';
-comment on column fos.dict_rates.change_user is 'Карйиний изменивший';
-comment on column fos.dict_rates.change_date is 'Крайняя дата изменения';
-comment on column fos.dict_rates.change_term is 'Терминал';
-comment on column fos.dict_rates.change_user_id is 'Пользователь';
+comment on column fos.dict_rates.cu is 'Карйиний изменивший';
+comment on column fos.dict_rates.cd is 'Крайняя дата изменения';
+comment on column fos.dict_rates.ct is 'Терминал';
+comment on column fos.dict_rates.cu_id is 'Пользователь';
 
 /*  
 -- SQL запросы

@@ -9,6 +9,7 @@ Change list:
 09.03.2017 Перепечко А.В. Замена dbo.dicts на dbo.dict_enums
 14.05.2017 Перепечко А.В. Приводим к единому виду обязательных атрибутов (id, descr, comm, cu, cd, ct, cu_id)
 21.05.2017 Перепечко А.В. Переносим на pg
+25.06.2017 Перепечко А.В. Укорачиваем наименования служебных колонок
 */
 --if OBJECT_ID( 'dbo.[dict_attr_items]', 'U') is NOT NULL
 --    drop table dbo.[dict_attr_items];
@@ -32,10 +33,10 @@ drop table fos.dict_attr_items cascade;
         description         - Описание
         comments            - Коменты
         -- Системные
-        change_user         - Пользователь
-        chnage_date         - Дата последнего изменения
-        change_term         - Терминал
-        change_user_id      - Ссылка на юзверя
+        cu                  - Пользователь
+        cd                  - Дата последнего изменения
+        ct                  - Терминал
+        cu_id               - Ссылка на юзверя
 */
 create table fos.dict_attr_items
 (
@@ -55,15 +56,15 @@ create table fos.dict_attr_items
     description         varchar(500)    NULL,
     comments            varchar(1000)   NULL,
     -- system info
-    change_user         varchar(256)    NOT NULL default session_user,
-    change_date         timestamp       NOT NULL default current_timestamp,
-    change_term         varchar(256)    NOT NULL default inet_client_addr(),
-    change_user_id      bigint          NULL,
+    cu                  varchar(256)    NOT NULL default session_user,
+    cd                  timestamp       NOT NULL default current_timestamp,
+    ct                  varchar(256)    NOT NULL default inet_client_addr(),
+    cu_id               bigint          NULL,
     -- constraints ---------------------------------------------
     constraint dict_attr_items_pk primary key ( id),   
     constraint dict_attr_items_fk_attr_group foreign key( attr_group_id) references fos.dict_attr_groups( id),
     constraint dict_attr_items_fk_data_type foreign key( data_type_id) references fos.dict_enum_items( id),
-    constraint dict_attr_items_fk_cu_id foreign key( change_user_id) references fos.sys_users( id),
+    constraint dict_attr_items_fk_cu_id foreign key( cu_id) references fos.sys_users( id),
     -- Проверки
     constraint dict_attr_items_ch_af check( active_flag in ( 0, 1)),
     constraint dict_attr_items_ch_nf check( null_flag in ( 0, 1))
@@ -85,10 +86,10 @@ comment on column fos.dict_attr_items.null_flag is 'Признак пустог�
 comment on column fos.dict_attr_items.default_value is 'Значение по умолчанию';
 comment on column fos.dict_attr_items.description is 'Описание';
 comment on column fos.dict_attr_items.comments is 'Коменты';
-comment on column fos.dict_attr_items.change_user is 'Крайний изменивший';
-comment on column fos.dict_attr_items.change_date is 'Крайняя дата изменения';
-comment on column fos.dict_attr_items.change_term is 'Терминал';
-comment on column fos.dict_attr_items.change_user_id is 'Пользователь';
+comment on column fos.dict_attr_items.cu is 'Крайний изменивший';
+comment on column fos.dict_attr_items.cd is 'Крайняя дата изменения';
+comment on column fos.dict_attr_items.ct is 'Терминал';
+comment on column fos.dict_attr_items.cu_id is 'Пользователь';
 
 /*  
 -- Проверка

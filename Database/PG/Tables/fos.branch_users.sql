@@ -8,6 +8,7 @@
 Change list:
 05.05.2017 Перепечко А.В. Переносим на PG
 14.05.2017 Перепечко А.В. Приводим к единому виду обязательных атрибутов (id, descr, comm, cu, cd, ct, cu_id)
+25.06.2017 Перепечко А.В. Укорачиваем наименования служебных колонок
 */
 /* Удаляем, если есть */
 --if OBJECT_ID( 'dbo.branch_users', 'U') is NOT NULL
@@ -20,10 +21,10 @@ drop table fos.branch_users cascade;
         user_id         - Ссылка на пользователя
         description     - Описание
         comments        - Коменты
-        change_user     - Последний изменивший
-        change_date     - Последняя дата изменений
-        change_term     - Терминал
-        change_user_id  - Пользователь
+        cu              - Последний изменивший
+        cd              - Последняя дата изменений
+        ct              - Терминал
+        cu_id           - Пользователь
 */
 create table fos.branch_users
 (
@@ -37,16 +38,16 @@ create table fos.branch_users
     description     varchar(500)    NULL,
     comments        varchar(1000)   NULL,
     -- system info
-    change_user     varchar(256)    NOT NULL default session_user,
-    change_date     timestamp       NOT NULL default current_timestamp,
-    change_term     varchar(256)    NOT NULL default inet_client_addr(),
-    change_user_id  bigint          NULL,
+    cu              varchar(256)    NOT NULL default session_user,
+    cd              timestamp       NOT NULL default current_timestamp,
+    ct              varchar(256)    NOT NULL default inet_client_addr(),
+    cu_id           bigint          NULL,
     -- constraints ---------------------------------------------
     constraint branch_users_pk primary key ( id),
     constraint branch_users_uk unique ( branch_id, user_id),
     constraint branch_users_fk_branch foreign key(branch_id) references fos.branches(id),
     constraint branch_users_fk_user foreign key(user_id) references fos.sys_users(id),
-    constraint branch_users_fk_cu_id foreign key( change_user_id) references fos.sys_users( id),
+    constraint branch_users_fk_cu_id foreign key( cu_id) references fos.sys_users( id),
     constraint branch_users_ch_af check( active_flag in ( 0, 1))
 )
 ;
@@ -61,10 +62,10 @@ comment on column fos.branch_users.branch_id is 'Ссылка на филиал'
 comment on column fos.branch_users.user_id is 'Ссылка на пользователя';
 comment on column fos.branch_users.description is 'Описание';
 comment on column fos.branch_users.comments is 'Коменты';
-comment on column fos.branch_users.change_user is 'Крайний изменивший';
-comment on column fos.branch_users.change_date is 'Крайняя дата изменения';
-comment on column fos.branch_users.change_term is 'Терминал';
-comment on column fos.branch_users.change_user_id is 'Пользователь';
+comment on column fos.branch_users.cu is 'Крайний изменивший';
+comment on column fos.branch_users.cd is 'Крайняя дата изменения';
+comment on column fos.branch_users.ct is 'Терминал';
+comment on column fos.branch_users.cu_id is 'Пользователь';
 
 /*  
 -- SQL запросы

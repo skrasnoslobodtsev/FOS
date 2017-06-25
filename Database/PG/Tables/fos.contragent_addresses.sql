@@ -7,6 +7,7 @@
 
 Change list:
 21.05.2017 Перепечко А.В. Переносим на pg
+25.06.2017 Перепечко А.В. Укорачиваем наименования служебных колонок
 */
 --if OBJECT_ID( 'dbo.[contragent_addresses]', 'U') is NOT NULL
 --  drop table dbo.contragent_addresses;
@@ -38,10 +39,10 @@ drop table fos.contragent_addresses cascade;
         description         - Описание
         comments            - Коменты
         -- Системные
-        change_user         - Пользователь
-        chnage_date         - Дата последнего изменения
-        change_term         - Терминал
-        change_user_id      - Ссылка на юзверя
+        cu                  - Пользователь
+        cd                  - Дата последнего изменения
+        ct                  - Терминал
+        cu_id               - Ссылка на юзверя
 */
 create table fos.contragent_addresses
 (
@@ -54,50 +55,76 @@ create table fos.contragent_addresses
     city_id             bigint          NULL,
 
     -- Атрибуты
-    post_index          nvarchar(50)    NULL,
-    country_name        nvarchar(100)   NULL,
-    area_name           nvarchar(100)   NULL,
-    street_kind_name    nvarchar(100)   NULL,
-    street_name         nvarchar(100)   NULL,
-    house_number        nvarchar(50)    NULL,
-    building1           nvarchar(50)    NULL,
-    building2           nvarchar(50)    NULL,
-    [address]           nvarchar(1000)  NULL,
+    post_index          varchar(50)     NULL,
+    country_name        varchar(100)    NULL,
+    area_name           varchar(100)    NULL,
+    street_kind_name    varchar(100)    NULL,
+    street_name         varchar(100)    NULL,
+    house_number        varchar(50)     NULL,
+    building1           varchar(50)     NULL,
+    building2           varchar(50)     NULL,
+    address             varchar(1000)   NULL,
     active_flag         int             NOT NULL default 1,
     primary_flag        int             NOT NULL default 0,
 
-    -- Не обязательные, но тоже есть у всех
-    [description]       nvarchar(500)   NULL,
-    comments            nvarchar(1000)  NULL,
-    -- Системные
-    change_user         nvarchar(256)   NOT NULL constraint contragent_addresses_df_cu default system_user,
-    change_date         datetime        NOT NULL constraint contragent_addresses_df_cd default getdate(),
-    change_term         nvarchar(256)   NOT NULL constraint contragent_addresses_dt_ct default host_name(),
-    change_user_id      bigint          NULL,
-    -- Ограничения
-    constraint contragent_addresses_pk primary key nonclustered ( id),
+    -- description and comments    
+    description         varchar(500)    NULL,
+    comments            varchar(1000)   NULL,
+    -- system info
+    cu                  varchar(256)    NOT NULL default session_user,
+    cd                  timestamp       NOT NULL default current_timestamp,
+    ct                  varchar(256)    NOT NULL default inet_client_addr(),
+    cu_id               bigint          NULL,
+    -- constraints ---------------------------------------------
+    constraint contragent_addresses_pk primary key ( id),
     -- Внешний ключ
-    constraint contragent_addresses_fk_contragent foreign key( contragent_id) references dbo.contragents( id),
-    constraint contragent_addresses_fk_kind foreign key( kind_id) references dbo.dict_enum_items( id),
-    constraint contragent_addresses_fk_country foreign key( country_id) references dbo.dict_countries( id),
-    constraint contragent_addresses_fk_city foreign key( city_id) references dbo.dict_cities( id),
-    constraint contragent_addresses_fk_cu_id foreign key( change_user_id) references dbo.sys_users( id),
+    constraint contragent_addresses_fk_contragent foreign key( contragent_id) references fos.contragents( id),
+    constraint contragent_addresses_fk_kind foreign key( kind_id) references fos.dict_enum_items( id),
+    constraint contragent_addresses_fk_country foreign key( country_id) references fos.dict_countries( id),
+    constraint contragent_addresses_fk_city foreign key( city_id) references fos.dict_cities( id),
+    constraint contragent_addresses_fk_cu_id foreign key( cu_id) references fos.sys_users( id),
     -- Уникальность
     -- Проверки
     constraint contragent_addresses_ch_af check( active_flag in ( 0, 1)),
     constraint contragent_addresses_ch_pf check( primary_flag in ( 0, 1))
 )
-go
+;
 
-grant select on dbo.contragent_addresses to public;
-go
+grant select on fos.contragent_addresses to public;
+grant select on fos.contragent_addresses to fos_public;
+
+comment on table fos.contragent_addresses is 'Справочник адресов контрагентов';
+
+comment on column fos.contragent_addresses.id is 'Уникальный идентификатор экземпляра';
+comment on column fos.contragent_addresses.contragent_id is 'Ссылка на контрагента, fos.contragents';
+comment on column fos.contragent_addresses.kind_id is 'Ссылка на вид адреса, fos.dict_enum_items (юр.адрес, факт.адрес)';
+comment on column fos.contragent_addresses.country_id is 'Ссылка на страну, fos.dict_countries';
+comment on column fos.contragent_addresses.city_id is 'Ссылка на город, fos.dict_cities';
+comment on column fos.contragent_addresses.post_index is 'Почтовый индекс';
+comment on column fos.contragent_addresses.country_name is 'Страна';
+comment on column fos.contragent_addresses.area_name is 'республика, край, область, округ';
+comment on column fos.contragent_addresses.street_kind_name is 'Вид улицы ( улица, тупик, переулок, etc.)';
+comment on column fos.contragent_addresses.street_name is 'Улица';
+comment on column fos.contragent_addresses.house_number is 'Номер дома';
+comment on column fos.contragent_addresses.building1 is 'Корпус';
+comment on column fos.contragent_addresses.building2 is 'Строение';
+comment on column fos.contragent_addresses.address is 'Адрес целиком';
+comment on column fos.contragent_addresses.active_flag is 'Признак активности адреса: 0 - нет, 1 (default) - да';
+comment on column fos.contragent_addresses.primary_flag is 'Признак основного адреса: 0 (default) - нет, 1 - да';
+comment on column fos.contragent_addresses.description is 'Описание';
+comment on column fos.contragent_addresses.comments is 'Коменты';
+comment on column fos.contragent_addresses.cu is 'Крайний изменивший';
+comment on column fos.contragent_addresses.cd is 'Крайняя дата изменения';
+comment on column fos.contragent_addresses.ct is 'Терминал';
+comment on column fos.contragent_addresses.cu_id is 'Пользователь';
+
 
 /*  
 -- Проверка
 select
     *
 from
-    dbo.[table_name]
+    fos.contragent_addresses
 ;
 
 -- SQL запросы 

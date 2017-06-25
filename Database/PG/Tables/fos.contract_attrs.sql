@@ -9,6 +9,7 @@ Chnage list:
 25.10.2016 Перепечко А.В. Добавляем ссылку на атрибут
 21.05.2017 Перепечко А.В. Приводим к единому виду обязательных атрибутов (id, descr, comm, cu, cd, ct, cu_id)
 21.05.2017 Перепечко А.В. Переносим на pg
+25.06.2017 Перепечко А.В. Укорачиваем наименования служебных колонок
 */
 --if OBJECT_ID( 'dbo.[contract_attrs]', 'U') is NOT NULL
 --    drop table dbo.[contract_attrs];
@@ -28,10 +29,10 @@ drop table fos.contract_attrs cascade;
     description         - Описание
     comments            - Коменты
     -- Системные
-    change_user         - Пользователь
-    chnage_date         - Дата последнего изменения
-    change_term         - Терминал
-    change_user_id      - Ссылка на юзверя
+    cu                  - Пользователь
+    cd                  - Дата последнего изменения
+    ct                  - Терминал
+    cu_id               - Ссылка на юзверя
 */
 create table fos.contract_attrs
 (
@@ -44,18 +45,18 @@ create table fos.contract_attrs
     data                varchar(2000)   NULL,
 
     -- description and comments    
-    description     varchar(500)    NULL,
-    comments        varchar(1000)   NULL,
+    description         varchar(500)    NULL,
+    comments            varchar(1000)   NULL,
     -- system info
-    change_user     varchar(256)    NOT NULL default session_user,
-    change_date     timestamp       NOT NULL default current_timestamp,
-    change_term     varchar(256)    NOT NULL default inet_client_addr(),
-    change_user_id  bigint          NULL,
+    cu                  varchar(256)    NOT NULL default session_user,
+    cd                  timestamp       NOT NULL default current_timestamp,
+    ct                  varchar(256)    NOT NULL default inet_client_addr(),
+    cu_id               bigint          NULL,
     -- constraints ---------------------------------------------
     constraint contract_attrs_pk primary key( id),
     constraint contract_attrs_fk_contract foreign key( contract_id) references fos.contracts( id),
     constraint constract_attrs_fk_attr_item foreign key( attr_item_id) references fos.dict_attr_items( id),
-    constraint contract_attrs_fk_cu_id foreign key( change_user_id) references fos.sys_users( id),
+    constraint contract_attrs_fk_cu_id foreign key( cu_id) references fos.sys_users( id),
     -- Ограничения проверки
     constraint contract_attrs_uk unique( contract_id, attr_item_id)
 )
@@ -72,10 +73,10 @@ comment on column fos.contract_attrs.attr_item_id is 'Ссылка на доп.�
 comment on column fos.contract_attrs.data is 'Значение';
 comment on column fos.contract_attrs.description is 'Описание';
 comment on column fos.contract_attrs.comments is 'Коменты';
-comment on column fos.contract_attrs.change_user is 'Крайний изменивший';
-comment on column fos.contract_attrs.change_date is 'Крайняя дата изменения';
-comment on column fos.contract_attrs.change_term is 'Терминал';
-comment on column fos.contract_attrs.change_user_id is 'Пользователь';
+comment on column fos.contract_attrs.cu is 'Крайний изменивший';
+comment on column fos.contract_attrs.cd is 'Крайняя дата изменения';
+comment on column fos.contract_attrs.ct is 'Терминал';
+comment on column fos.contract_attrs.cu_id is 'Пользователь';
 
 /*  
 -- Проверка

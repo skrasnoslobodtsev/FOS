@@ -8,6 +8,7 @@
 Change list:
 04.05.2017 Перепечко А.В. Переносим на PG
 14.05.2017 Перепечко А.В. Приводим к единому виду обязательных атрибутов (id, descr, comm, cu, cd, ct, cu_id)
+25.06.2017 Перепечко А.В. Укорачиваем наименования служебных колонок
 */
 --if OBJECT_ID( 'dbo.sys_user_groups', 'U') is NOT NULL
 --    drop table dbo.sys_user_groups;
@@ -26,10 +27,10 @@ drop table fos.sys_user_groups cascade;
         description         - Описание
         comments            - Коменты
         -- Системные
-        change_user         - Пользователь
-        chnage_date         - Дата последнего изменения
-        change_term         - Терминал
-        change_user_id      - Ссылка на юзверя
+        cu                  - Пользователь
+        cd                  - Дата последнего изменения
+        ct                  - Терминал
+        cu_id               - Ссылка на юзверя
 */
 create table fos.sys_user_groups
 (
@@ -44,10 +45,10 @@ create table fos.sys_user_groups
     description         varchar(500)    NULL,
     comments            varchar(1000)   NULL,
     -- Системные
-    change_user         varchar(256)    NOT NULL default session_user,
-    change_date         timestamp       NOT NULL default current_timestamp,
-    change_term         varchar(256)    NOT NULL default inet_client_addr(),
-    change_user_id      bigint          NULL,
+    cu                  varchar(256)    NOT NULL default session_user,
+    cd                  timestamp       NOT NULL default current_timestamp,
+    ct                  varchar(256)    NOT NULL default inet_client_addr(),
+    cu_id               bigint          NULL,
     -- Ограничения
     constraint sys_user_groups_pk
         primary key ( id),
@@ -60,7 +61,7 @@ create table fos.sys_user_groups
     constraint sys_user_groups_fk_username
         foreign key( username) references fos.sys_users( username),
     constraint sys_user_groups
-        foreign key( change_user_id) references fos.sys_users( id)
+        foreign key( cu_id) references fos.sys_users( id)
 )
 ;
 
@@ -79,10 +80,10 @@ comment on column fos.sys_user_groups.sys_user_id is 'Ссылка на поль
 comment on column fos.sys_user_groups.username is 'Пользователь';
 comment on column fos.sys_user_groups.description is 'Описание';
 comment on column fos.sys_user_groups.comments is 'Коменты';
-comment on column fos.sys_user_groups.change_user is 'Изменил';
-comment on column fos.sys_user_groups.change_date is 'Изменили';
-comment on column fos.sys_user_groups.change_term is 'Терминал';
-comment on column fos.sys_user_groups.change_user_id is 'Пользователь';
+comment on column fos.sys_user_groups.cu is 'Изменил';
+comment on column fos.sys_user_groups.cd is 'Изменили';
+comment on column fos.sys_user_groups.ct is 'Терминал';
+comment on column fos.sys_user_groups.cu_id is 'Пользователь';
 
 /*  
 -- Проверка

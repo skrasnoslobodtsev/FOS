@@ -8,6 +8,7 @@
 Change list:
 17.04.2017 Перепечко А.В. Переносим на pg
 14.05.2017 Перепечко А.В. Приводим к единому виду обязательных атрибутов (id, descr, comm, cu, cd, ct, cu_id)
+22.06.2017 Перепечко А.В. Укорачиваем наименования служебных колонок
 */
 /* Удаляем, если есть */
 --if OBJECT_ID( 'dbo.sys_users', 'U') is NOT NULL
@@ -26,10 +27,10 @@ drop table fos.sys_users cascade;
         active_flag     - Признак активности, 0 - не активен, 1 (default) - активен
         description     - Описание
         comments        - Коментарии
-        change_user     - Последний изменивший
-        change_date     - Последняя дата изменений
-        change_term     - Терминал
-        change_user_id  - Ссылка на пользователя
+        cu              - Последний изменивший
+        cd              - Последняя дата изменений
+        ct              - Терминал
+        cu_id           - Ссылка на пользователя
 */
 create table fos.sys_users
 (
@@ -42,25 +43,25 @@ create table fos.sys_users
     username        varchar(100)    NOT NULL,
     password        varchar(100)    NOT NULL,
     operator        varchar(100)    NULL,
-    active_flag     int             NOT NULL default 1,
+    active_flag     int             NOT NULL default 0,
     -- description and comments    
     description     varchar(500)    NULL,
     comments        varchar(1000)   NULL,
     -- system info
-    change_user     varchar(256)    NOT NULL default session_user,
-    change_date     timestamp       NOT NULL default current_timestamp,
-    change_term     varchar(256)    NOT NULL default inet_client_addr(),
-    change_user_id  bigint          NULL,
+    cu              varchar(256)    NOT NULL default session_user,
+    cd              timestamp       NOT NULL default current_timestamp,
+    ct              varchar(256)    NOT NULL default inet_client_addr(),
+    cu_id           bigint          NULL,
     -- constraints ---------------------------------------------
     constraint sys_users_pk primary key (id),
     constraint sys_users_uk_user unique (username),
-    constraint sys_users_chk_af check( active_flag in (0, 1))
+    constraint sys_users_ch_af check( active_flag in (0, 1))
 )
 ;
 
 create index sys_users_idx on fos.sys_users( username);
 
-alter table fos.sys_users add constraint sys_users_fk_cu_id foreign key( change_user_id) references fos.sys_users( id);
+alter table fos.sys_users add constraint sys_users_fk_cu_id foreign key( cu_id) references fos.sys_users( id);
 
 grant select on fos.sys_users to public;
 grant select on fos.sys_users to fos_public;
@@ -73,7 +74,7 @@ comment on column fos.sys_users.name is 'Для обратной совмест�
 comment on column fos.sys_users.username is 'login/пользователь';
 comment on column fos.sys_users.password is 'Пароль';
 comment on column fos.sys_users.operator is 'ФИО оператора';
-comment on column fos.sys_users.active_flag is 'Признак активности, 0 - не активен, 1 (default) - активен';
+comment on column fos.sys_users.active_flag is 'Признак активности, 0 (default) - не активен, 1 - активен';
 comment on column fos.sys_users.description is 'Описание';
 comment on column fos.sys_users.comments is 'Коменты';
 comment on column fos.sys_users.cu is 'Изменил';

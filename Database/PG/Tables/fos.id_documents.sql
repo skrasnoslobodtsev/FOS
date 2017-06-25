@@ -9,6 +9,7 @@ Change list:
 09.03.2017 Перепечко А.В. Замена dbo.dicts на dbo.dict_enums
 21.05.2017 Перепечко А.В. Приводим к единому виду обязательных атрибутов (id, descr, comm, cu, cd, ct, cu_id)
 21.05.2017 Перепечко А.В. Переносим на pg
+25.06.2017 Перепечко А.В. Укорачиваем наименования служебных колонок
 */
 --if OBJECT_ID( 'dbo.[id_documents]', 'U') is NOT NULL
 --    drop table dbo.[id_documents];
@@ -33,10 +34,10 @@ drop table fos.id_documents cascade;
         description         - Описание
         comments            - Коменты
         -- Системные
-        change_user         - Пользователь
-        chnage_date         - Дата последнего изменения
-        change_term         - Терминал
-        change_user_id      - Ссылка на юзверя
+        cu                  - Пользователь
+        cd                  - Дата последнего изменения
+        ct                  - Терминал
+        cu_id               - Ссылка на юзверя
 */
 create table fos.id_documents
 (
@@ -58,16 +59,16 @@ create table fos.id_documents
     description         varchar(500)    NULL,
     comments            varchar(1000)   NULL,
     -- system info
-    change_user         varchar(256)    NOT NULL default session_user,
-    change_date         timestamp       NOT NULL default current_timestamp,
-    change_term         varchar(256)    NOT NULL default inet_client_addr(),
-    change_user_id      bigint          NULL,
+    cu                  varchar(256)    NOT NULL default session_user,
+    cd                  timestamp       NOT NULL default current_timestamp,
+    ct                  varchar(256)    NOT NULL default inet_client_addr(),
+    cu_id               bigint          NULL,
     -- constraints ---------------------------------------------
     constraint id_documents_pk primary key ( id),
     -- Ссылки
     constraint id_documents_fk_kind foreign key( kind_id) references fos.dict_enum_items( id),
     constraint id_documents_fk_contragent foreign key( contragent_id) references fos.contragents( id),
-    constraint id_documents_fk_cu_id foreign key( change_user_id) references fos.sys_users( id),
+    constraint id_documents_fk_cu_id foreign key( cu_id) references fos.sys_users( id),
     -- Уникальность
     constraint id_documents_uk unique( kind_id, doc_serie, doc_number)
 )
@@ -91,10 +92,10 @@ comment on column fos.id_documents.doc_department_code is 'Код подразд
 comment on column fos.id_documents.primary_flag is 'Признак основного документа: 0 (default) - нет, 1 - да';
 comment on column fos.id_documents.description is 'Описание';
 comment on column fos.id_documents.comments is 'Коментарии';
-comment on column fos.id_documents.change_user is 'Крайний изменивший';
-comment on column fos.id_documents.change_date is 'Крайняя дата изменений';
-comment on column fos.id_documents.change_term is 'Терминал';
-comment on column fos.id_documents.change_user_id is 'Пользователь';
+comment on column fos.id_documents.cu is 'Крайний изменивший';
+comment on column fos.id_documents.cd is 'Крайняя дата изменений';
+comment on column fos.id_documents.ct is 'Терминал';
+comment on column fos.id_documents.cu_id is 'Пользователь';
 
 /*  
 -- Проверка
