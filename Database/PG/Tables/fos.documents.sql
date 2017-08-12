@@ -3,7 +3,7 @@
 /* Сгенерировано из шаблона
     Developer : Перепечко А.В.
     Created   : 02.06.2016
-    Purpose   : Документы, базовая таблица
+    Purpose   : Объекты учёта, корневая таблица документов
 
 Change list:
 08.11.2016 Перепечко А.В. Убираем серию
@@ -12,6 +12,7 @@ Change list:
 21.05.2017 Перепечко А.В. Приводим к единому виду обязательных атрибутов (id, descr, comm, cu, cd, ct, cu_id)
 21.05.2017 Перепечко А.В. Переносим на pg
 25.06.2017 Перепечко А.В. Укорачиваем наименования служебных колонок
+12.08.2017 Перепечко А.В. Добавляем комментарии
 */
 --if OBJECT_ID( 'dbo.[documents]', 'U') is NOT NULL
 --    drop table dbo.[documents];
@@ -32,6 +33,10 @@ drop table fos.documents cascade;
         description         - Описание
         comments            - Коменты
         -- Системные
+        cru                 - Создавший
+        crd                 - Дата создания
+        crt                 - Терминал
+        cru_id              - Пользователь
         cu                  - Пользователь
         cd                  - Дата последнего изменения
         ct                  - Терминал
@@ -78,6 +83,25 @@ create index documents_idx_branch_type_num on fos.documents( branch_id, type_id,
 
 grant select on fos.documents to public;
 grant select on fos.documents to fos_public;
+
+comment on table fos.documents is 'Объекты учёта, корневая таблица документов';
+
+comment on column fos.documents.id is 'Уникальный идентификатор экземпляра';
+comment on column fos.documents.branch_id is 'Ссылка на филиал';
+comment on column fos.documents.owner_id is 'Ссылка на документ владелец';
+comment on column fos.documents.type_id is 'Ссылка на тип документа';
+comment on column fos.documents.doc_number is 'Номер документа';
+comment on column fos.documents.description is 'Описание';
+comment on column fos.documents.comments is 'Коменты';
+comment on column fos.documents.cru is 'Создавший';
+comment on column fos.documents.crd is 'Дата создания';
+comment on column fos.documents.crt is 'Терминал';
+comment on column fos.documents.cru_id is 'Пользователь';
+comment on column fos.documents.cu is 'Крайний изменивший';
+comment on column fos.documents.cd is 'Крайняя дата изменений';
+comment on column fos.documents.ct is 'Треминал';
+comment on column fos.documents.cu_id is 'Пользователь';
+
 
 /*  
 -- Проверка

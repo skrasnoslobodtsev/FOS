@@ -3,13 +3,14 @@
 /* Сгенерировано из шаблона
     Developer : Перепечко А.В.
     Created   : 02.06.2016
-    Purpose   : Таблица договоров
+    Purpose   : Объекты учёта, таблица договоров
 
 Change list:
 09.03.2017 Перепечко А.В. Замена dbo.dicts на dbo.dict_enums
 21.05.2017 Перепечко А.В. Приводим к единому виду обязательных атрибутов (id, descr, comm, cu, cd, ct, cu_id)
 21.05.2017 Перепечко А.В. Переносим на pg
 25.06.2017 Перепечко А.В. Укорачиваем наименования служебных колонок
+12.08.2017 Перепечко А.В. Дорабатываем версионность (root, prior, next)
 */
 --if OBJECT_ID( 'dbo.[contracts]', 'U') is NOT NULL
 --    drop table dbo.[contracts];
@@ -19,17 +20,18 @@ drop table fos.contracts cascade;
   Атрибуты:
     id                  - Уникальный идентификатор экземпляра
     -- Ссылки
-    version_id          - Ссылка на предыдущую версию
+    root_id             - Ссылка на корневую версию
+    prior_version_id    - Ссылка на предыдущую версию
+    next_version_id     - Ссылка на следующую версию
     kind_id             - Ссылка на вид договора, простой справочник
     status_id           - Статус договора
 
     -- Атрибуты
-    begin_date          - Дата начала действия договора
-    end_date            - Дата окончания действия договора
+    from_date           - Дата начала действия договора
+    till_date           - Дата окончания действия договора
     accept_date         - Дата акцепта договора
     cancel_date         - Дата расторжения
     restore_date        - Дата восстановления
-
 
     -- Не обязательные, но тоже есть у всех
     description         - Описание
@@ -44,7 +46,9 @@ create table fos.contracts
 (
     id                  bigint          NOT NULL,
     -- Ссылки
-    version_id          bigint          NULL,
+    root_id             bigint          NOT NULL,
+    prior_version_id    bigint          NULL,
+    next_version_id     bigint          NULL,
     kind_id             bigint          NOT NULL,
     state_id            bigint          NULL,
 
@@ -67,8 +71,10 @@ create table fos.contracts
     -- constraints ---------------------------------------------
     constraint contracts_pk primary key( id),
     -- Ссылки
-    constraint contracts_fk_version foreign key( version_id) references fos.contracts( id),
     constraint contracts_fk_document foreign key( id) references fos.documents( id),
+    constraint contracts_fk_root foreign key( root_id) references fos.contracts( id),
+    constraint contracts_fk_prior_version foreign key( prior_version_id) references fos.contracts( id),
+    constraint contracts_fk_next_version foreign key( next_version_id) references fos.contracts( id),
     constraint contracts_fk_kind foreign key( kind_id) references fos.dict_enum_items( id),
     constraint contracts_fk_state foreign key( state_id) references fos.dict_enum_items( id),
     constraint constract_fk_cu_id foreign key( cu_id) references fos.sys_users( id)
@@ -78,10 +84,12 @@ create table fos.contracts
 grant select on fos.contracts to public;
 grant select on fos.contracts to fos_public;
 
-comment on table fos.contracts is 'Договора';
+comment on table fos.contracts is 'Объекты учёта, таблица договоров';
 
 comment on column fos.contracts.id is 'Уникальный идентификатор экземпляра';
-comment on column fos.contracts.version_id is 'Ссылка на предыдущую версию';
+comment on column fos.contracts.root_id is 'Ссылка на корневую версию';
+comment on column fos.contracts.prior_version_id is 'Ссылка на предыдущую версию';
+comment on column fos.contracts.next_version_id is 'Ссылка на следующую версию';
 comment on column fos.contracts.kind_id is 'Ссылка на вид договора, справочник fos.dict_enum_items';
 comment on column fos.contracts.state_id is 'Ссылка на статус договора, справочник fos.dict_enum_items';
 comment on column fos.contracts.sign_date is 'Дата подписания';

@@ -47,11 +47,13 @@ create table fos.contract_attrs
     -- description and comments    
     description         varchar(500)    NULL,
     comments            varchar(1000)   NULL,
+
     -- system info
     cu                  varchar(256)    NOT NULL default session_user,
     cd                  timestamp       NOT NULL default current_timestamp,
     ct                  varchar(256)    NOT NULL default inet_client_addr(),
     cu_id               bigint          NULL,
+
     -- constraints ---------------------------------------------
     constraint contract_attrs_pk primary key( id),
     constraint contract_attrs_fk_contract foreign key( contract_id) references fos.contracts( id),

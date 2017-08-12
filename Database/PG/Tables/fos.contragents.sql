@@ -57,13 +57,13 @@ create table fos.contragents
     resident_flag       int             NOT NULL default 1,
 
     -- description and comments    
-    description     varchar(500)    NULL,
-    comments        varchar(1000)   NULL,
+    description         varchar(500)    NULL,
+    comments            varchar(1000)   NULL,
     -- system info
-    cu     varchar(256)    NOT NULL default session_user,
-    cd     timestamp       NOT NULL default current_timestamp,
-    ct     varchar(256)    NOT NULL default inet_client_addr(),
-    cu_id  bigint          NULL,
+    cu                  varchar(256)    NOT NULL default session_user,
+    cd                  timestamp       NOT NULL default current_timestamp,
+    ct                  varchar(256)    NOT NULL default inet_client_addr(),
+    cu_id               bigint          NULL,
     -- constraints ---------------------------------------------
     constraint contragents_pk primary key ( id),
     constraint contragents_fk_type foreign key( type_id) references fos.dict_enum_items( id),
