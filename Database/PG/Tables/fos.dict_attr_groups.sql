@@ -9,32 +9,37 @@ Change list:
 21.05.2017 Перепечко А.В. Приводим к единому виду обязательных атрибутов (id, descr, comm, cu, cd, ct, cu_id)
 21.05.2017 Перепечко А.В. Переносим на pg
 25.06.2017 Перепечко А.В. Укорачиваем наименования служебных колонок
+07.10.2017 Перепечко А.В. Добавляем ссылки на корень, след и пред версии, признак удаления
 */
 --if OBJECT_ID( 'dbo.[dict_attr_groups]', 'U') is NOT NULL
 --  drop table dbo.[dict_attr_groups];
 --go
 drop table fos.dict_attr_groups cascade;
 /*
-  Атрибуты:
-    id                  - Уникальный идентификатор экземпляра
-    -- Ссылки
-    branch_id           - Ссылка на филиал, если NULL - то для всех
-    type_id             - Ссылка на тип объекта, справочник fos.dict_enums
-    kind_id             - Ссылка на вид в объекте, справочник fos.duct_enum_items
+    Атрибуты:
+        id                  - Уникальный идентификатор экземпляра
+        -- Ссылки
+        branch_id           - Ссылка на филиал, если NULL - то для всех
+        root_id             - Ссылка на корневую версию
+        prior_version_id    - Ссылка на предыдущую версию
+        next_version_id     - Ссылка на следующую версию
+        type_id             - Ссылка на тип объекта, справочник fos.dict_enums
+        kind_id             - Ссылка на вид в объекте, справочник fos.duct_enum_items
 
-    -- Атрибуты
-    code                - Код
-    name                - Наименование
-    active_flag         - Признак активности: 0 - нет, 1 (default) - да
+        -- Атрибуты
+        code                - Код
+        name                - Наименование
+        active_flag         - Признак активности: 0 - нет, 1 (default) - да
 
-    -- Не обязательные, но тоже есть у всех
-    description         - Описание
-    comments            - Коменты
-    -- Системные
-    cu                  - Пользователь
-    cd                  - Дата последнего изменения
-    ct                  - Терминал
-    cu_id               - Ссылка на юзверя
+        -- Не обязательные, но тоже есть у всех
+        delete_flag         - Признак удаления сущности: 0 (default) - нет, 1 - да
+        description         - Описание
+        comments            - Коменты
+        -- Системные
+        cu                  - Пользователь
+        cd                  - Дата последнего изменения
+        ct                  - Терминал
+        cu_id               - Ссылка на юзверя
 */
 create table fos.dict_attr_groups
 (
@@ -66,7 +71,8 @@ create table fos.dict_attr_groups
     -- Уникальность
     constraint dict_attr_groups_uk unique( branch_id, type_id, kind_id, code),
     -- Проверки
-    constraint dict_attr_groups_ch_af check( active_flag in ( 0, 1))
+    constraint dict_attr_groups_ch_af check( active_flag in ( 0, 1)),
+    constraint dict_attr_groups_ch_df check( delete_flag in ( 0, 1))
 )
 ;
 
@@ -77,11 +83,15 @@ comment on table fos.dict_attr_groups is 'Справочник дополнит�
 
 comment on column fos.dict_attr_groups.id is 'Уникальный идентификатор экземпляра';
 comment on column fos.dict_attr_groups.branch_id is 'Ссылка на филиал';
+comment on column fos.dict_attr_groups.root_id is 'Ссылка на корневую версию';
+comment on column fos.dict_attr_groups.prior_version_id is 'Ссылка на предыдушую версию';
+comment on column fos.dict_attr_groups.next_version_id is 'Ссылка на следующую версию';
 comment on column fos.dict_attr_groups.type_id is 'Ссылка на тип объекта, справочник fos.dict_enums';
 comment on column fos.dict_attr_groups.kind_id is 'Ссылка на вид вид в объекте, справочник fos.dict_enum_items';
 comment on column fos.dict_attr_groups.code is 'Код';
 comment on column fos.dict_attr_groups.name is 'Наименование';
 comment on column fos.dict_attr_groups.active_flag is 'Признак активности: 0 - нет, 1 (default) - да';
+comment on column fos.dict_attr_groups.delete_flag is 'Признак удаления сущности: 0 (default) - нет, 1 - да';
 comment on column fos.dict_attr_groups.description is 'Описание';
 comment on column fos.dict_attr_groups.comments is 'Коменты';
 comment on column fos.dict_attr_groups.cu is 'Крайний изменивший';
