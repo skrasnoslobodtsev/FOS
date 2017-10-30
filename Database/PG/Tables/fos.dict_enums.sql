@@ -12,6 +12,7 @@ Change list:
 14.05.2017 Перепечко А.В. Приводим к единому виду обязательных атрибутов (id, descr, comm, cu, cd, ct, cu_id)
 25.06.2017 Перепечко А.В. Укорачиваем наименования служебных колонок
 06.10.2017 Перепечко А.В. Добавляем ссылки на корень, след и пред версии, признак удаления
+30.10.2017 Перепечко А.В. Добавляем номер версии
 */
 /* Удаляем, если есть */
 --if OBJECT_ID( 'dbo.dict_enums', 'U') is NOT NULL
@@ -29,6 +30,7 @@ drop table fos.dict_enums cascade;
         code                - Код
         name                - Наименование
         -- Не обязательные, но тоже есть у всех
+        version_index       - Номер версии
         delete_flag         - Признак удаления сущности: 0 (default) - нет, 1 - да
         description         - Описание
         comments            - Коменты
@@ -51,6 +53,7 @@ create table fos.dict_enums
     name                varchar(100)    NOT NULL,
     system_flag         int             NOT NULL default 0,
     -- description and comments    
+    version_index       int             not null default 0,
     delete_flag         int             not null default 0,
     description         varchar(500)    NULL,
     comments            varchar(1000)   NULL,
@@ -63,7 +66,8 @@ create table fos.dict_enums
     constraint dict_enums_pk primary key (id),
     constraint dict_enums_fk_branch foreign key (branch_id) references fos.branches(id),
     constraint dict_enums_fk_cu_id foreign key( cu_id) references fos.sys_users( id),
-    constraint dict_enums_uk_code unique (code, branch_id),
+    constraint dict_enums_uk_version unique( root_id, version_index),
+    constraint dict_enums_uk_code unique ( code, branch_id, version_index),
     constraint dict_enums_chk_sf check( system_flag in ( 0, 1)),
     constraint dict_enums_ch_df check( delete_flag in ( 0, 1))
 )
@@ -100,6 +104,7 @@ comment on column fos.dict_enums.next_version_id is 'Ссылка на след�
 comment on column fos.dict_enums.code is 'Код';
 comment on column fos.dict_enums.name is 'Наименование';
 comment on column fos.dict_enums.system_flag is 'Признак системного справочника: 0 (default) - нет, 1 - да';
+comment on column fos.dict_enums.version_index is 'Номер версии';
 comment on column fos.dict_enums.delete_flag is 'Признак удаления сущности: 0 (default) - нет, 1 - да';
 comment on column fos.dict_enums.description is 'Описание';
 comment on column fos.dict_enums.comments is 'Коменты';

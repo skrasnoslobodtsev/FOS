@@ -10,6 +10,7 @@ Chnage list:
 14.05.2017 Перепечко А.В. Приводим к единому виду обязательных атрибутов (id, descr, comm, cu, cd, ct, cu_id)
 25.06.2017 Перепечко А.В. Укорачиваем наименования служебных колонок
 07.10.2017 Перепечко А.В. Добавляем ссылки на корень, след и пред версии, признак удаления
+30.10.2017 Перепечко А.В. Добавил номер версии (в качестве экпиримента)
 */
 /* Удаляем, если есть */
 --if OBJECT_ID( 'fos.dict_countries', 'U') is NOT NULL
@@ -17,51 +18,60 @@ Chnage list:
 drop table fos.dict_countries cascade;
 /*
     Атрибуты:
-        id              - ID связи
+        id                  - ID связи
 
-        name            - Наименование
-        code_2          - Код 2
-        code_3          - Код 3
-        code_number     - Цифрокод
+        -- Ссылки
+        root_id             - Ссылка на корневую версию
+        prior_version_id    - Ссылка на предыдущую версию
+        next_version_id     - Ссылка на соедующую версию
+
+        -- Атрибуты
+        code                - Код
+        name                - Наименование
+        code_2              - Код 2
+        code_3              - Код 3
+        code_number         - Цифрокод
 
         -- Не обязательные, но тоже есть у всех
+        version_index       - Номер версии
         delete_flag         - Признак удаления сущности: 0 (default) - нет, 1 - да
-        description     - Описание
-        comments        - Коментарии
-        code            - Код
+        description         - Описание
+        comments            - Коментарии
 
         -- Системные
-        cu              - Последний изменивший
-        cd              - Дата изменения
-        ct              - Терминал
-        cu_id           - Ссылка на пользователя
+        cu                  - Последний изменивший
+        cd                  - Дата изменения
+        ct                  - Терминал
+        cu_id               - Ссылка на пользователя
 */
 create table fos.dict_countries
 (
-    id                  bigint          NOT NULL,
+    id                      bigint          NOT NULL,
     -- Ссылки
-    root_id             bigint          not null,
-    prior_version_id    bigint          null,
-    next_version_id     bigint          null,
+    root_id                 bigint          not null,
+    prior_version_id        bigint          null,
+    next_version_id         bigint          null,
     -- Атрибуты
-    code                varchar(50)     NOT NULL,
-    name                varchar(100)    NOT NULL,
-    code_2              varchar(50)     NOT NULL,
-    code_3              varchar(50)     NOT NULL,
-    code_number         varchar(50)     NOT NULL,
+    code                    varchar(50)     NOT NULL,
+    name                    varchar(100)    NOT NULL,
+    code_2                  varchar(50)     NOT NULL,
+    code_3                  varchar(50)     NOT NULL,
+    code_number             varchar(50)     NOT NULL,
     -- Не обязательные, но тоже есть у всех
-    delete_flag         int             not null default 0,
-    description         varchar(500)    NOT NULL,
-    comments            varchar(1000)   NULL,
+    version_index           int             not null default 0,
+    delete_flag             int             not null default 0,
+    description             varchar(500)    NOT NULL,
+    comments                varchar(1000)   NULL,
     -- ------
-    cu                  varchar(256)    NOT NULL default session_user,
-    cd                  timestamp       NOT NULL default current_timestamp,
-    ct                  varchar(256)    NOT NULL default inet_client_addr(),
-    cu_id               bigint          NULL,
+    cu                      varchar(256)    NOT NULL default session_user,
+    cd                      timestamp       NOT NULL default current_timestamp,
+    ct                      varchar(256)    NOT NULL default inet_client_addr(),
+    cu_id                   bigint          NULL,
     -- --------------------------------------
     constraint dict_countries_pk primary key (id),
-    constraint dict_countries_uk unique (code_3),
-    constraint dict_countries_fk_cu_id foreign key( cu_id) references fos.sys_users( id)
+    constraint dict_countries_fk_cu_id foreign key( cu_id) references fos.sys_users( id),
+    constraint dict_countries_uk_version unique ( root_id, version_index),
+    constraint dict_countries_uk unique( code_3, version_index)
 )
 ;
 
@@ -105,6 +115,7 @@ comment on column fos.dict_countries.code is 'Код (code_3)';
 comment on column fos.dict_countries.code_2 is 'Код 2 буквы';
 comment on column fos.dict_countries.code_3 is 'Код 3 буквы';
 comment on column fos.dict_countries.code_number is 'Код цифры';
+comment on column fos.dict_countries.version_index is 'Номер версии';
 comment on column fos.dict_countries.delete_flag is 'Признак удаления сущности: 0 (default) - нет, 1 - да';
 comment on column fos.dict_countries.description is 'Описание';
 comment on column fos.dict_countries.comments is 'Коментарии';
