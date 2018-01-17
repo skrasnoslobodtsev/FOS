@@ -11,11 +11,12 @@ Change list:
 16.08.2017 Перепечко А.В. Переименовываем таблицу, добиваем атрибуты
 16.08.2017 Перепечко А.В. Переносим на PG
 30.10.2017 Перепечко А.В. Добавляем ссылки на корень, след и пред версии, признак удаления, номер версии
+24.12.2017 Перепечкр А.В. Убираем номер версии
 */
 --if OBJECT_ID( 'dbo.dict_ins_agents', 'U') is NOT NULL
 --    drop table dbo.dict_ins_agents;
 --go
-drop table fos.dict_ins_agents cascade;
+drop table if exists fos.dict_ins_agents cascade;
 /*
     Атрибуты:
         id                  - Уникальный идентификатор экземпляра
@@ -58,7 +59,7 @@ create table fos.dict_ins_agents
     name                    varchar(100)    NOT NULL,
 
     -- description and comments    
-    version_index           int             not null default 0,
+--    version_index           int             not null default 0,
     delete_flag             int             not null default 0,
     description             varchar(500)    NULL,
     comments                varchar(1000)   NULL,
@@ -75,7 +76,7 @@ create table fos.dict_ins_agents
     constraint dict_ins_agents_fk_state foreign key( state_id) references fos.dict_enum_items( id),
     constraint dict_ins_agents_fk_cu_id foreign key( cu_id) references fos.sys_users( id),
     -- Уникальность
-    constraint dict_ins_agents_uk_code unique( branch_id, code, version_index),
+--    constraint dict_ins_agents_uk_code unique( branch_id, code, version_index),
     -- Проверки
     constraint dict_ins_agents_ch_code check( code != '')
 );
@@ -116,7 +117,7 @@ comment on column fos.dict_ins_agents.branch_id is 'Ссылка на филиа
 comment on column fos.dict_ins_agents.state_id is 'Ссылка на статус, fos.dict_enum_items';
 comment on column fos.dict_ins_agents.code is 'Уникальный код агента';
 comment on column fos.dict_ins_agents.name is 'Наименование';
-comment on column fos.dict_ins_agents.version_index is 'Номер версии';
+--comment on column fos.dict_ins_agents.version_index is 'Номер версии';
 comment on column fos.dict_ins_agents.delete_flag is 'Признак удаления сущности: 0 (default) - нет, 1 - да';
 comment on column fos.dict_ins_agents.description is 'Описание';
 comment on column fos.dict_ins_agents.comments is 'Коменты';

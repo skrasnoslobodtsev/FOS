@@ -12,7 +12,7 @@ Change list:
 */
 --if OBJECT_ID( 'dbo.sys_groups', 'U') is NOT NULL
 --    drop table dbo.sys_groups;
-drop table fos.sys_groups cascade;
+drop table if exists fos.sys_groups cascade;
 /*
     Атрибуты:
         id                  - Уникальный идентификатор экземпляра

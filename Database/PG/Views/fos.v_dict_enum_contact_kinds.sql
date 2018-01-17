@@ -23,6 +23,8 @@ Change list:
         dict_enum_code              - Код
         dict_enum_name              - Наименование
 */
+drop view if exists fos.v_dict_enum_contact_kinds cascade;
+
 create or replace view fos.v_dict_enum_contact_kinds
 as
 select

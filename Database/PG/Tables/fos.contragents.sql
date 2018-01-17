@@ -18,7 +18,7 @@ Change list:
 */
 --if OBJECT_ID( 'dbo.[contragents]', 'U') is NOT NULL
 --    drop table dbo.[contragents];
-drop table fos.contragents cascade;
+drop table if exists fos.contragents cascade;
 /*
     Атрибуты:
         id                  - Уникальный идентификатор экземпляра
@@ -53,7 +53,7 @@ create table fos.contragents
 (
     id                  bigint          NOT NULL,
     -- Ссылки
-    root_id             bigint          not null,
+    root_id             bigint          null,
     prior_version_id    bigint          null,
     next_version_id     bigint          null,
     type_id             bigint          NOT NULL,
@@ -88,6 +88,17 @@ create table fos.contragents
 )
 ;
 
+alter table fos.contragents 
+    add constraint contragents_fk_root
+        foreign key( root_id) references fos.contragents( id);
+alter table fos.contragents
+    add constraint contragent_fk_prior_version
+        foreign key( prior_version_id) references fos.contragents( id);
+alter table fos.contragents
+    add constraint contragents_fk_next_version
+        foreign key( next_version_id) references fos.contragents( id);
+
+
 --create index contragents_idx_norm_name on fos.contragents( norm_name asc, root_id asc, id desc);
 create index contragents_idx_j_descr on fos.contragents( j_descr asc, id asc);
 -- Для проверки уникальности
@@ -96,7 +107,7 @@ create index contragents_idx_ch_itn on fos.contragents( itn);
 grant select on fos.contragents to public;
 grant select on fos.contragents to fos_public;
 
-comment on table fos.contragents is 'Контрагенты, базовая таблица';
+comment on table fos.contragents is 'Контрагенты: базовая таблица';
 
 comment on column fos.contragents.id is 'Уникальный идентификатор экземпляра';
 comment on column fos.contragents.root_id is 'Ссылка на корневую версию';

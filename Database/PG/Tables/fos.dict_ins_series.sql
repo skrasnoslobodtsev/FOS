@@ -13,7 +13,7 @@ Change list:
 */
 --if OBJECT_ID( 'dbo.dict_ins_series', 'U') is NOT NULL
 --    drop table dbo.dict_ins_series;
-drop table fos.dict_ins_series cascade;
+drop table if exists fos.dict_ins_series cascade;
 /*
     Атрибуты:
         id                  - Уникальный идентификатор экземпляра

@@ -13,7 +13,7 @@ Change list:
 /* Удаляем, если есть */
 --if OBJECT_ID( 'dbo.dict_rates', 'U') is NOT NULL
 --    drop table dbo.dict_rates;
-drop table fos.dict_rates cascade;
+drop table if exists fos.dict_rates cascade;
 /*
     Атрибуты:
         id              - Уникальный идентификатор экземпляра

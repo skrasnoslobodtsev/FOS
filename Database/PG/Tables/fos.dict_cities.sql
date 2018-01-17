@@ -13,7 +13,7 @@ Change list:
 /* Удаляем, если есть */
 --if OBJECT_ID( 'dbo.dict_cities', 'U') is NOT NULL
 --    drop table dbo.dict_cities;
-drop table fos.dict_cities cascade;
+drop table if exists fos.dict_cities cascade;
 /*
     Атрибуты:
         id              - Уникальный идентификатор экземпляра
@@ -27,13 +27,20 @@ drop table fos.dict_cities cascade;
 create table fos.dict_cities
 (
     id              bigint          NOT NULL,
+
+    -- links
     country_id      bigint          NULL,
+
+    -- attributes
     code            varchar(50)     NOT NULL,
     name            varchar(100)    NOT NULL,
     post_code       varchar(50)     NULL,
+
+    -- description and comments
     description     varchar(500)    NULL,
     comments        varchar(1000)   NULL,
-    -- ---
+
+    -- system info
     cu              varchar(256)    NOT NULL default session_user,
     cd              timestamp       NOT NULL default current_timestamp,
     ct              varchar(256)    NOT NULL default inet_client_addr(),

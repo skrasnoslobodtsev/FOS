@@ -14,7 +14,7 @@ Change list:
 --if OBJECT_ID( 'dbo.[dict_attr_groups]', 'U') is NOT NULL
 --  drop table dbo.[dict_attr_groups];
 --go
-drop table fos.dict_attr_groups cascade;
+drop table if exists fos.dict_attr_groups cascade;
 /*
     Атрибуты:
         id                  - Уникальный идентификатор экземпляра
@@ -46,6 +46,9 @@ create table fos.dict_attr_groups
     id                  bigint          NOT NULL,
     -- Ссылки
     branch_id           bigint          NULL,
+    root_id             bigint          not null,
+    prior_version_id    bigint          null,
+    next_version_id     bigint          null,
     type_id             bigint          NOT NULL,
     kind_id             bigint          NOT NULL,
 
@@ -55,13 +58,14 @@ create table fos.dict_attr_groups
     active_flag         int             NOT NULL default 1,
 
     -- description and comments    
+    delete_flag         int             not null default 0,
     description         varchar(500)    NULL,
     comments            varchar(1000)   NULL,
     -- system info
-    cu         varchar(256)    NOT NULL default session_user,
-    cd         timestamp       NOT NULL default current_timestamp,
-    ct         varchar(256)    NOT NULL default inet_client_addr(),
-    cu_id      bigint          NULL,
+    cu                  varchar(256)    NOT NULL default session_user,
+    cd                  timestamp       NOT NULL default current_timestamp,
+    ct                  varchar(256)    NOT NULL default inet_client_addr(),
+    cu_id               bigint          NULL,
     -- constraints ---------------------------------------------
     constraint dict_attr_groups_pk primary key( id),
     constraint dict_attr_groups_fk_branch foreign key( branch_id) references fos.branches( id),

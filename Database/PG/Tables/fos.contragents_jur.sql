@@ -13,7 +13,7 @@ Change list:
 */
 --if OBJECT_ID( 'dbo.[contragents_jur]', 'U') is NOT NULL
 --    drop table dbo.[contragents_jur];
-drop table fos.contragents_jur cascade;
+drop table if exists fos.contragents_jur cascade;
 /*
     Атрибуты:
         id                  - Уникальный идентификатор экземпляра
@@ -21,12 +21,6 @@ drop table fos.contragents_jur cascade;
         reg_country_id      - Ссылка на страну регистрации
 
         -- Атрибуты
-        name                - Произвольное наименование
-        lat_name            - Произвольное наименование на латинице
-        norm_name           - Нормализованное произвольное наименование (в верхнем регистре)
-        norm_lat_name       - Нормализованное наименование на латинице (в верхнем регистре)
-        short_name          - Краткое наименование
-        full_name           - Полное наименование
         psrn                - ОГРН (основной государственный регистрационный номер)
         reg_date            - Дата регистрации
         rac                 - КПП (код причины постановки на учёт)
@@ -50,12 +44,12 @@ create table fos.contragents_jur
     -- Ссылки
     reg_country_id      bigint          NULL,
     -- Атрибуты
-    name                varchar(100)    NOT NULL,
-    lat_name            varchar(100)    NULL,
-    norm_name           varchar(100)    NOT NULL,
-    norm_lat_name       varchar(100)    NULL,
-    short_name          varchar(100)    NULL,
-    full_name           varchar(100)    NULL,
+--    name                varchar(100)    NOT NULL,
+--    lat_name            varchar(100)    NULL,
+--    norm_name           varchar(100)    NOT NULL,
+--    norm_lat_name       varchar(100)    NULL,
+--    short_name          varchar(100)    NULL,
+--    full_name           varchar(100)    NULL,
     psrn                varchar(50)     NULL,
     reg_date            timestamp       NULL,
     rac                 varchar(50)     NULL,
@@ -85,16 +79,16 @@ create table fos.contragents_jur
 grant select on fos.contragents_jur to public;
 grant select on fos.contragents_jur to fos_public;
 
-comment on table fos.contragents_jur is 'Справочник контрагентов ю.л.';
+comment on table fos.contragents_jur is 'Контрагенты: ю.л.';
 
 comment on column fos.contragents_jur.id is 'Уникальный идентификатор экземпляра и ссылка на fos.contragents(id)';
 comment on column fos.contragents_jur.reg_country_id is 'Ссылка на страну регистрации';
-comment on column fos.contragents_jur.name is 'Произвольное наименование';
-comment on column fos.contragents_jur.lat_name is 'Произвольное наименование на латинице';
-comment on column fos.contragents_jur.norm_name is 'Нормализованное произвольное наименование (в верхнем регистре)';
-comment on column fos.contragents_jur.norm_lat_name is 'Нормализованное наименование на латинице (в верхнем регистре)';
-comment on column fos.contragents_jur.short_name is 'Краткое наименование';
-comment on column fos.contragents_jur.full_name is 'Полное наименование';
+--comment on column fos.contragents_jur.name is 'Произвольное наименование';
+--comment on column fos.contragents_jur.lat_name is 'Произвольное наименование на латинице';
+--comment on column fos.contragents_jur.norm_name is 'Нормализованное произвольное наименование (в верхнем регистре)';
+--comment on column fos.contragents_jur.norm_lat_name is 'Нормализованное наименование на латинице (в верхнем регистре)';
+--comment on column fos.contragents_jur.short_name is 'Краткое наименование';
+--comment on column fos.contragents_jur.full_name is 'Полное наименование';
 comment on column fos.contragents_jur.psrn is 'ОГРН (основной государственный регистрационный номер)';
 comment on column fos.contragents_jur.reg_date is 'Дата регистрации';
 comment on column fos.contragents_jur.rac is 'КПП';

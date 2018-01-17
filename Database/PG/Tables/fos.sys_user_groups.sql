@@ -9,10 +9,11 @@ Change list:
 04.05.2017 Перепечко А.В. Переносим на PG
 14.05.2017 Перепечко А.В. Приводим к единому виду обязательных атрибутов (id, descr, comm, cu, cd, ct, cu_id)
 25.06.2017 Перепечко А.В. Укорачиваем наименования служебных колонок
+26.11.2017 Перепечкр А.В. Убираем username, больше не требуется
 */
 --if OBJECT_ID( 'dbo.sys_user_groups', 'U') is NOT NULL
 --    drop table dbo.sys_user_groups;
-drop table fos.sys_user_groups cascade;
+drop table if exists fos.sys_user_groups cascade;
 /*
     Атрибуты:
         id                  - Уникальный идентификатор экземпляра
@@ -21,7 +22,6 @@ drop table fos.sys_user_groups cascade;
         sys_user_id         - Ссылка на юзверя
 
         -- Атрибуты
-        username            - Пользователь (для совместимости с сервером приложений)
 
         -- Не обязательные, но тоже есть у всех
         description         - Описание
@@ -58,8 +58,6 @@ create table fos.sys_user_groups
         foreign key( sys_user_id) references fos.sys_users( id),
     constraint sys_user_groups_uk
         unique( sys_user_id, sys_group_id),
-    constraint sys_user_groups_fk_username
-        foreign key( username) references fos.sys_users( username),
     constraint sys_user_groups
         foreign key( cu_id) references fos.sys_users( id)
 )
@@ -77,7 +75,6 @@ comment on table fos.sys_user_groups is 'Группы пользователей
 comment on column fos.sys_user_groups.id is 'Уникальный идентификатор экземпляра';
 comment on column fos.sys_user_groups.sys_group_id is 'Ссылка на группу';
 comment on column fos.sys_user_groups.sys_user_id is 'Ссылка на пользователя';
-comment on column fos.sys_user_groups.username is 'Пользователь';
 comment on column fos.sys_user_groups.description is 'Описание';
 comment on column fos.sys_user_groups.comments is 'Коменты';
 comment on column fos.sys_user_groups.cu is 'Изменил';

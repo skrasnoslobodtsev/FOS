@@ -13,7 +13,7 @@ Change list:
 */
 --if OBJECT_ID( 'dbo.[id_documents]', 'U') is NOT NULL
 --    drop table dbo.[id_documents];
-drop table fos.id_documents cascade;
+drop table if exists fos.id_documents cascade;
 /*
     Атрибуты:
         id                  - Уникальный идентификатор экземпляра
@@ -70,7 +70,7 @@ create table fos.id_documents
     constraint id_documents_fk_contragent foreign key( contragent_id) references fos.contragents( id),
     constraint id_documents_fk_cu_id foreign key( cu_id) references fos.sys_users( id),
     -- Уникальность
-    constraint id_documents_uk unique( kind_id, doc_serie, doc_number)
+    constraint id_documents_uk unique( contragent_id, kind_id, doc_serie, doc_number)
 )
 ;
 

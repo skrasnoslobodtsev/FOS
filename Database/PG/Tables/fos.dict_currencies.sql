@@ -10,11 +10,12 @@ Change list:
 14.05.2017 Перепечко А.В. Приводим к единому виду обязательных атрибутов (id, descr, comm, cu, cd, ct, cu_id)
 25.06.2017 Перепечко А.В. Укорачиваем наименования служебных колонок
 30.10.2017 Перепечко А.В. Добавляем ссылки на корень, след и пред версии, признак удаления, номер версии
+30.11.2017 Перепечко А.В. Убираем накуй номер версии, ибо огребём много геммороя с ней
 */
 /* Удаляем, если есть */
 --if OBJECT_ID( 'dbo.dict_currencies', 'U') is NOT NULL
 --    drop table dbo.dict_currencies;
-drop table fos.dict_currencies cascade;
+drop table if exists fos.dict_currencies cascade;
 /*
     Атрибуты:
         id              - Уникальный идентификатор экземпляра
@@ -24,12 +25,12 @@ drop table fos.dict_currencies cascade;
         next_version_id     - Ссылка на соедующую версию
 
         -- Атрибуты
+        code            - Код (iso_code)
         name            - Наименование валюты
         iso_code        - ISO код валюты
         num_code        - Цифро код валюты
         sign            - Обозначение
         country_name    - Наименование страны
-        code            - Код
         -- Не обязательно, но тоже у всех есть
         delete_flag     - Признак удаления
         description     - Описание
@@ -44,6 +45,10 @@ create table fos.dict_currencies
 (
     id                  bigint          NOT NULL,
     -- Ссылки
+    root_id             bigint          not null,
+    prior_version_id    bigint          null,
+    next_version_id     bigint          null,
+
     -- Атрибуты
     code                varchar(50)     NOT NULL,
     name                varchar(100)    NOT NULL,
@@ -52,7 +57,7 @@ create table fos.dict_currencies
     sign                varchar(50)     NULL,
     country_name        varchar(100)    NULL,
     -- Не обязательно, но тоже у всех есть
-    version_index       int             not null default 0,
+--    version_index       int             not null default 0,
     delete_flag         int             not null default 0,
     description         varchar(500)    NULL,
     comments            varchar(1000)   NULL,
@@ -63,15 +68,38 @@ create table fos.dict_currencies
     cu_id               bigint          NULL,
     -- ---------------------------------------------------------
     constraint dict_currencies_pk primary key(id),
-    constraint dict_currencies_uk_code unique( version_index, iso_code),
-    constraint dict_currencies_uk_num unique( version_index, num_code),
-    constraint dict_currencies_uk_code unique( code),
-    constraint dict_currencies_fk_cu_id foreign key( cu_id) references fos.sys_users( id)
+--    constraint dict_currencies_uk_code unique( version_index, iso_code),
+--    constraint dict_currencies_uk_num unique( version_index, num_code),
+--    constraint dict_currencies_uk_code unique( code),
+    constraint dict_currencies_fk_cu_id foreign key( cu_id) references fos.sys_users( id),
+    constraint dict_currencies_ch_df check( delete_flag in ( 0, 1))
 )
 ;
 
 create index dict_currencies_idx_id on fos.dict_currencies( id);
 create index dict_currencies_idx_code on fos.dict_currencies( code);
+
+
+alter table 
+    fos.dict_currencies
+add
+    constraint dict_currencies_fk_root
+    foreign key( root_id)
+    references fos.dict_currencies( id);
+
+alter table 
+    fos.dict_currencies
+add
+    constraint dict_currencies_fk_prior_version
+    foreign key( prior_version_id)
+    references fos.dict_currencies( id);
+
+alter table
+    fos.dict_currencies
+add
+    constraint dict_currencies_fk_next_version
+    foreign key( next_version_id)
+    references fos.dict_currencies( id);
 
 grant select on fos.dict_currencies to public;
 grant select on fos.dict_currencies to fos_public;
@@ -88,7 +116,7 @@ comment on column fos.dict_currencies.iso_code is 'iso код 3 буквы';
 comment on column fos.dict_currencies.num_code is 'цифро код 3 цифры';
 comment on column fos.dict_currencies.sign is 'Обозначение';
 comment on column fos.dict_currencies.country_name is 'Наименование страны';
-comment on column fos.dict_currencies.version_index is 'Номер версии';
+--comment on column fos.dict_currencies.version_index is 'Номер версии';
 comment on column fos.dict_currencies.delete_flag is 'Признак удаления сущности: 0 (default) - нет, 1 - да';
 comment on column fos.dict_currencies.description is 'Описание';
 comment on column fos.dict_currencies.comments is 'Коментарии';

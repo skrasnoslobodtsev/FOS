@@ -17,7 +17,7 @@ Change list:
 --if OBJECT_ID( 'dbo.[documents]', 'U') is NOT NULL
 --    drop table dbo.[documents];
 --go
-drop table fos.documents cascade;
+drop table if exists fos.documents cascade;
 /*
     Атрибуты:
         id                  - Уникальный идентификатор экземпляра
@@ -27,6 +27,7 @@ drop table fos.documents cascade;
         type_id             - Тип документа, справочник dbo.dict_enum_items
 
         -- Атрибуты
+        j_descr             - java descriminator
         doc_number          - Номер документа
 
         -- Не обязательные, но тоже есть у всех
@@ -51,6 +52,7 @@ create table fos.documents
     type_id             bigint          NOT NULL,
 
     -- Атрибуты
+    j_descr             varchar(100)    not null,
     doc_number          varchar(100)    NOT NULL,
 
     -- description and comments    
@@ -90,6 +92,7 @@ comment on column fos.documents.id is 'Уникальный идентифика
 comment on column fos.documents.branch_id is 'Ссылка на филиал';
 comment on column fos.documents.owner_id is 'Ссылка на документ владелец';
 comment on column fos.documents.type_id is 'Ссылка на тип документа';
+comment on column fos.documents.j_descr is 'java descriminator';
 comment on column fos.documents.doc_number is 'Номер документа';
 comment on column fos.documents.description is 'Описание';
 comment on column fos.documents.comments is 'Коменты';

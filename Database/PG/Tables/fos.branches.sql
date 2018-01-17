@@ -13,7 +13,7 @@ Change list:
 /* Удаляем, если есть */
 --if OBJECT_ID( 'dbo.branches', 'U') is NOT NULL
 --    drop table dbo.branches;
-drop table fos.branches cascade;
+drop table if exists fos.branches cascade;
 /*
     Атрибуты:
         id              - Уникальный идентификатор экземпляра
@@ -43,6 +43,7 @@ create table fos.branches
     constraint branches_pk primary key (id),
     constraint branches_fk_country foreign key (country_id) references fos.dict_countries(id),
     constraint branches_fk_city foreign key ( city_id) references fos.dict_cities(id),
+    constraint branches_fk_nat_currency foreign key( nat_currency_id) references fos.dict_currencies( id),
     constraint branches_fk_cu_id foreign key( cu_id) references fos.sys_users( id),
     constraint branches_uk_code unique ( code)
 )

@@ -11,11 +11,12 @@ Chnage list:
 25.06.2017 Перепечко А.В. Укорачиваем наименования служебных колонок
 07.10.2017 Перепечко А.В. Добавляем ссылки на корень, след и пред версии, признак удаления
 30.10.2017 Перепечко А.В. Добавил номер версии (в качестве экпиримента)
+30.11.2017 Перепечко А.В. Убираем накуй номер версии, ибо огребём много геммороя с ней
 */
 /* Удаляем, если есть */
 --if OBJECT_ID( 'fos.dict_countries', 'U') is NOT NULL
 --    drop table fos.dict_countries;
-drop table fos.dict_countries cascade;
+drop table if exists fos.dict_countries cascade;
 /*
     Атрибуты:
         id                  - ID связи
@@ -33,7 +34,7 @@ drop table fos.dict_countries cascade;
         code_number         - Цифрокод
 
         -- Не обязательные, но тоже есть у всех
-        version_index       - Номер версии
+--        version_index       - Номер версии
         delete_flag         - Признак удаления сущности: 0 (default) - нет, 1 - да
         description         - Описание
         comments            - Коментарии
@@ -58,7 +59,7 @@ create table fos.dict_countries
     code_3                  varchar(50)     NOT NULL,
     code_number             varchar(50)     NOT NULL,
     -- Не обязательные, но тоже есть у всех
-    version_index           int             not null default 0,
+--    version_index           int             not null default 0,
     delete_flag             int             not null default 0,
     description             varchar(500)    NOT NULL,
     comments                varchar(1000)   NULL,
@@ -70,8 +71,9 @@ create table fos.dict_countries
     -- --------------------------------------
     constraint dict_countries_pk primary key (id),
     constraint dict_countries_fk_cu_id foreign key( cu_id) references fos.sys_users( id),
-    constraint dict_countries_uk_version unique ( root_id, version_index),
-    constraint dict_countries_uk unique( code_3, version_index)
+--    constraint dict_countries_uk_version unique ( root_id, version_index),
+--    constraint dict_countries_uk unique( code_3, version_index),
+    constraint dict_countries_ch_df check( delete_flag in ( 0, 1))
 )
 ;
 
@@ -115,7 +117,7 @@ comment on column fos.dict_countries.code is 'Код (code_3)';
 comment on column fos.dict_countries.code_2 is 'Код 2 буквы';
 comment on column fos.dict_countries.code_3 is 'Код 3 буквы';
 comment on column fos.dict_countries.code_number is 'Код цифры';
-comment on column fos.dict_countries.version_index is 'Номер версии';
+--comment on column fos.dict_countries.version_index is 'Номер версии';
 comment on column fos.dict_countries.delete_flag is 'Признак удаления сущности: 0 (default) - нет, 1 - да';
 comment on column fos.dict_countries.description is 'Описание';
 comment on column fos.dict_countries.comments is 'Коментарии';

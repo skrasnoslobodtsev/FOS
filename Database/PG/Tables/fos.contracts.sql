@@ -15,7 +15,7 @@ Change list:
 --if OBJECT_ID( 'dbo.[contracts]', 'U') is NOT NULL
 --    drop table dbo.[contracts];
 --go
-drop table fos.contracts cascade;
+drop table if exists fos.contracts cascade;
 /*
   Атрибуты:
     id                  - Уникальный идентификатор экземпляра
@@ -50,7 +50,7 @@ create table fos.contracts
     prior_version_id    bigint          NULL,
     next_version_id     bigint          NULL,
     kind_id             bigint          NOT NULL,
-    state_id            bigint          NULL,
+    status_id           bigint          NULL,
 
     -- Атрибуты
     sign_date           timestamp       NULL,
@@ -60,7 +60,8 @@ create table fos.contracts
     cancel_date         timestamp       NULL,
     restore_date        timestamp       NULL,
 
-    -- description and comments    
+    -- description and comments
+    delete_flag         int             not null default 0,
     description         varchar(500)    NULL,
     comments            varchar(1000)   NULL,
     -- system info
@@ -76,8 +77,9 @@ create table fos.contracts
     constraint contracts_fk_prior_version foreign key( prior_version_id) references fos.contracts( id),
     constraint contracts_fk_next_version foreign key( next_version_id) references fos.contracts( id),
     constraint contracts_fk_kind foreign key( kind_id) references fos.dict_enum_items( id),
-    constraint contracts_fk_state foreign key( state_id) references fos.dict_enum_items( id),
-    constraint constract_fk_cu_id foreign key( cu_id) references fos.sys_users( id)
+    constraint contracts_fk_status foreign key( status_id) references fos.dict_enum_items( id),
+    constraint contracts_fk_cu_id foreign key( cu_id) references fos.sys_users( id),
+    constraint contracts_ch_df check( delete_flag in ( 0, 1))
 )
 ;
 
@@ -91,13 +93,14 @@ comment on column fos.contracts.root_id is 'Ссылка на корневую �
 comment on column fos.contracts.prior_version_id is 'Ссылка на предыдущую версию';
 comment on column fos.contracts.next_version_id is 'Ссылка на следующую версию';
 comment on column fos.contracts.kind_id is 'Ссылка на вид договора, справочник fos.dict_enum_items';
-comment on column fos.contracts.state_id is 'Ссылка на статус договора, справочник fos.dict_enum_items';
+comment on column fos.contracts.status_id is 'Ссылка на статус договора, справочник fos.dict_enum_items';
 comment on column fos.contracts.sign_date is 'Дата подписания';
 comment on column fos.contracts.from_date is 'Дата начала действия';
 comment on column fos.contracts.till_date is 'Дата окончания действия';
 comment on column fos.contracts.accept_date is 'Дата акцепта';
 comment on column fos.contracts.cancel_date is 'Дата расторжения';
 comment on column fos.contracts.restore_date is 'Дата восстановления';
+comment on column fos.contracts.delete_flag is 'Признак удаления: 0 (default) - нет, 1 - да';
 comment on column fos.contracts.description is 'Описание';
 comment on column fos.contracts.comments is 'Коменты';
 comment on column fos.contracts.cu is 'Крайний изменивший';

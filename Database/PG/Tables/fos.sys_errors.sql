@@ -14,36 +14,42 @@ Change list:
 --if OBJECT_ID( 'dbo.sys_errors', 'U') is NOT NULL
 --    drop table dbo.sys_errors;
 
-drop table fos.sys_errors cascade;
+drop table if exists fos.sys_errors cascade;
 
 /*
     Атрибуты:
-        id             - Уникальный идентификатор экземпляра
-        code           - <== Для обратной совместимости, Код ошибки (строка)
-        name           - <== Для обратной совместимости, Текст ошибки
-        error_code     - Код ошибки. ВНИМАНИЕ!!! В отличии от остальных обьектов, код ошибки цифровой!
-        error_message  - Текст
-        fmt_message    - Форматированное сообщение
+        id                  - Уникальный идентификатор экземпляра
+
+        -- атрибуты
+        code                - <== Для обратной совместимости, Код ошибки (строка)
+        name                - <== Для обратной совместимости, Текст ошибки
+        error_code          - Код ошибки. ВНИМАНИЕ!!! В отличии от остальных обьектов, код ошибки цифровой!
+        error_message       - Текст
+        fmt_error_message   - Форматированное сообщение
+
         -- Есть у всех
-        description     - Описание
-        comments        - Коментарии
+        description         - Описание
+        comments            - Коментарии
+
         --
-        cu              - Последний изменивший
-        cd              - Последнее изменение
-        ct              - Терминал
-        cu_id           - Ссылка на пользователя системы
+        cu                  - Последний изменивший
+        cd                  - Последнее изменение
+        ct                  - Терминал
+        cu_id               - Ссылка на пользователя системы
 */
 create table fos.sys_errors
 (
     id                  bigint          NOT NULL,
+    -- атрибуты
     code                varchar(50)     NOT NULL,
-    name                varchar(100)    NULL,
+    name                varchar(2000)   NULL,
     error_code          int             NOT NULL,
     error_message       varchar(2000)   NULL,
     fmt_error_message   varchar(2000)   NULL,
-    -- системные
+    -- коменты и описание
     description         varchar(500)    NULL,
     comments            varchar(1000)   NULL,
+    -- системные
     cu                  varchar(256)    NOT NULL default session_user,
     cd                  timestamp       NOT NULL default current_timestamp,
     ct                  varchar(256)    NOT NULL default inet_client_addr(),

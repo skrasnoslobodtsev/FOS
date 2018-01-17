@@ -21,8 +21,43 @@ Change list:
         dict_enum_code              - Код
         dict_enum_name              - Наименование
 */
+drop view if exists fos.v_dict_enum_address_kinds cascade;
+
 create or replace view fos.v_dict_enum_address_kinds
 as
+with recursive cte as
+(
+    select
+        id,
+        root_id,
+        branch_id,
+        1 as level,
+        code,
+        name,
+        system_flag,
+        delete_flag
+    from
+        fos.dict_enums
+    where
+        root_id = id
+    and code = 'dict_address_kinds'
+    union all
+    select
+        i.id,
+        i.root_id,
+        i.branch_id,
+        c.level + 1 as level,
+        i.code,
+        i.name,
+        i.system_flag,
+        i.delete_flag
+    from
+        fos.dict_enums i
+        inner join
+            cte c
+            on
+                c.id = i.prior_version_id
+)
 select
     dei.id,
     dei.branch_id,
@@ -30,17 +65,17 @@ select
     dei.name,
     dei.description,
     dei.comments,
-    de.id as dict_enum_id,
+    dei.dict_enum_id,
     de.branch_id as dict_enum_branch_id,
     de.code as dict_enum_code,
-    de.name as dict_enum_name
+    de.name as dict_enum_name,
+    de.root_id as dict_enum_root_id
 from
-    fos.dict_enum_items dei
-    inner join
-        fos.dict_enums de
+    cte de
+    left outer join
+        fos.dict_enum_items dei
         on
-            de.code = 'dict_address_kinds'
-        and de.id = dei.dict_enum_id
+            dei.dict_enum_id = de.id
 ;
 
 grant select on fos.v_dict_enum_address_kinds to public;

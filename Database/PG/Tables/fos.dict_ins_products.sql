@@ -10,11 +10,12 @@ Change list:
 09.03.2017 Перепечко А.В. Замена dbo.dicts на dbo.dict_enums
 31.07.2017 Перепечко А.В. Приводим к единому виду обязательных атрибутов (id, descr, comm, cu, cd, ct, cu_id)
 03.08.2017 Перепечко А.В. Переносим на PG
+24.12.2017 Перепечко А.В. Добавляем признаки пенсии и инвестиций
 */
 --if OBJECT_ID( 'dbo.[dict_ins_products]', 'U') is NOT NULL
 --    drop table dbo.dict_ins_products;
 --go
-drop table fos.dict_ins_products cascade;
+drop table if exists fos.dict_ins_products cascade;
 /*
     Атрибуты:
         id                      - Уникальный идентификатор экземпляра
@@ -36,6 +37,8 @@ drop table fos.dict_ins_products cascade;
         -- Признаки
         active_flag             - Признак активности продукта, 0 (default) - нет, 1 - да
         surrender_values_flag   - Признак наличия выкупных сумм, 0 (default) - нет, 1 - да
+        pension_flag            - Признак выплаты пенсии/ренты: 0 (default) - нет, 1 - да
+        investment_flag         - Признак участия в инвестициях: 0 (default) - нет, 1 - да
 
         -- Не обязательные, но тоже есть у всех
         description             - Описание
@@ -52,7 +55,7 @@ create table fos.dict_ins_products
     id                      bigint          NOT NULL,
     -- Ссылки
     branch_id               bigint          NULL,
-    root_id                 bigint          NOT NULL,
+    root_id                 bigint          NULL,
     prior_version_id        bigint          NULL,
     next_version_id         bigint          NULL,
     status_id               bigint          NULL,
@@ -62,7 +65,7 @@ create table fos.dict_ins_products
     name                    varchar(100)    NOT NULL,
     date_from               timestamp       NULL,
     date_till               timestamp       NULL,
-    def_grr                 real            NULL,
+    def_grr                 float           NULL,
     def_grr_date            timestamp       NULL,
 
     -- Признаки
@@ -96,8 +99,8 @@ create table fos.dict_ins_products
     constraint dict_ins_products_fk_next_version
         foreign key( next_version_id) references fos.dict_ins_products( id),
     -- Уникальность
-    constraint dict_ins_products_uk
-        unique( branch_id, name),
+--    constraint dict_ins_products_uk
+--        unique( branch_id, name),
     -- Проверки
     constraint dict_ins_products_ch_af
         check( active_flag in ( 0, 1)),

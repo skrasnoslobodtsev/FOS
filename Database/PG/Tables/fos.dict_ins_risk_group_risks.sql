@@ -10,7 +10,7 @@ Change list:
 */
 --if OBJECT_ID( 'dbo.dict_ins_risk_group_risks', 'U') is NOT NULL
 --    drop table dbo.dict_ins_risk_group_risks;
-drop table fos.dict_ins_risk_group_risks cascade;
+drop table if exists fos.dict_ins_risk_group_risks cascade;
 /*
     Атрибуты:
         id                  - Уникальный идентификатор экземпляра
@@ -55,13 +55,13 @@ create table fos.dict_ins_risk_group_risks
     constraint dict_ins_risk_group_risks_group
         foreign key( risk_group_id) references fos.dict_ins_risks( id),
     constraint dict_ins_risk_group_risks_risk
-        foreign key( risk_id) references fos.dict_ins_risks( id),
+        foreign key( risk_id) references fos.dict_ins_risks( id)
     -- Уникальность
-    constraint dict_ins_risk_group_risks_uk
-        unique( risk_group_id, risk_id),
+--    constraint dict_ins_risk_group_risks_uk
+--        unique( risk_group_id, risk_id),
     -- Проверки
-    constraint dict_ins_risk_group_risks_ch
-        check( risk_group_id != risk_id)
+--    constraint dict_ins_risk_group_risks_ch
+--        check( risk_group_id != risk_id)
 );
 
 grant select on fos.dict_ins_risk_group_risks to public;

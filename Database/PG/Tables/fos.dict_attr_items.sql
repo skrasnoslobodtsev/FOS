@@ -14,7 +14,7 @@ Change list:
 --if OBJECT_ID( 'dbo.[dict_attr_items]', 'U') is NOT NULL
 --    drop table dbo.[dict_attr_items];
 --go
-drop table fos.dict_attr_items cascade;
+drop table if exists fos.dict_attr_items cascade;
 /*
     Атрибуты:
         id                  - Уникальный идентификатор экземпляра

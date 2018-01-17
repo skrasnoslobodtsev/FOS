@@ -14,7 +14,7 @@ Change list:
 */
 --if OBJECT_ID( 'dbo.[contacts]', 'U') is NOT NULL
 --    drop table dbo.[contacts];
-drop table fos.contragent_contacts cascade;
+drop table if exists fos.contragent_contacts cascade;
 /*
     Атрибуты:
         id                  - Уникальный идентификатор экземпляра

@@ -14,7 +14,7 @@ Change list:
 /* Удаляем, если есть */
 --if OBJECT_ID( 'dbo.settings', 'U') is NOT NULL
 --    drop table dbo.settings;
-drop table fos.settings cascade;
+drop table if exists fos.settings cascade;
 /*
     Атрибуты:
         id              - Уникальный идентификатор экземпляра

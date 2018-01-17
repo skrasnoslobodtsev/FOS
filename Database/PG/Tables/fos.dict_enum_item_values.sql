@@ -13,7 +13,7 @@ Change list:
 /* Удаляем, если есть */
 --if OBJECT_ID( 'dbo.dict_enum_item_values', 'U') is NOT NULL
 --    drop table dbo.dict_enum_item_values;
-drop table fos.dict_enum_item_values cascade;
+drop table if exists fos.dict_enum_item_values cascade;
 /*
     Атрибуты:
         id              - Уникальный идентификатор экземпляра

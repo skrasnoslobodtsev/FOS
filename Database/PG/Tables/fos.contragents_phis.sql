@@ -12,7 +12,7 @@ Change list:
 */
 --if OBJECT_ID( 'dbo.[contragents_phis]', 'U') is NOT NULL
 --    drop table dbo.[contragents_phis];
-drop table fos.contragents_phis cascade;
+drop table if exists fos.contragents_phis cascade;
 /*
     Атрибуты:
         id                  - Уникальный идентификатор экземпляра
@@ -23,12 +23,6 @@ drop table fos.contragents_phis cascade;
         last_name           - Фамилия
         first_name          - Имя
         patronymic          - Отчество
-        name                - ФИО
-        lat_name            - ФИО на латинице
-        norm_name           - Нормализованное произвольное наименование (в верхнем регистре)
-        norm_lat_name       - Нормализованное наименование на латинице (в верхнем регистре)
-        short_name          - ФИО кратко
-        full_name           - ФИО полностью
         birth_date          - Дата рождения
         birth_place         - Место рождения
         death_date          - Дата смерти
@@ -50,12 +44,12 @@ create table fos.contragents_phis
     last_name           varchar(100)    NOT NULL,
     first_name          varchar(100)    NOT NULL,
     patronymic          varchar(100)    NULL,
-    name                varchar(100)    NOT NULL,
-    lat_name            varchar(100)    NULL,
-    norm_name           varchar(100)    NOT NULL,
-    norm_lat_name       varchar(100)    NULL,
-    short_name          varchar(100)    NULL,
-    full_name           varchar(100)    NULL,
+--    name                varchar(100)    NOT NULL,
+--    lat_name            varchar(100)    NULL,
+--    norm_name           varchar(100)    NOT NULL,
+--    norm_lat_name       varchar(100)    NULL,
+--    short_name          varchar(100)    NULL,
+--    full_name           varchar(100)    NULL,
     birth_date          timestamp       NULL,
     birth_place         varchar(100)    NULL,
     death_date          timestamp       NULL,
@@ -76,18 +70,18 @@ create table fos.contragents_phis
 grant select on fos.contragents_phis to public;
 grant select on fos.contragents_phis to fos_public;
 
-comment on table fos.contragents_phis is 'Контрагенты ф.л.';
+comment on table fos.contragents_phis is 'Контрагенты: ф.л.';
 
 comment on column fos.contragents_phis.id is 'Уникальный идентификатор экземпляра';
 comment on column fos.contragents_phis.last_name is 'Фвмилия';
 comment on column fos.contragents_phis.first_name is 'Имя';
 comment on column fos.contragents_phis.patronymic is 'Отчество';
-comment on column fos.contragents_phis.name is 'ФИО';
-comment on column fos.contragents_phis.lat_name is 'ФИО латиницей';
-comment on column fos.contragents_phis.norm_name is 'Нормализованное произвольное наименование (в верхнем регистре)';
-comment on column fos.contragents_phis.norm_lat_name is 'Нормализованное наименование на латинице (в верхнем регистре)';
-comment on column fos.contragents_phis.short_name is 'ФИО кратко';
-comment on column fos.contragents_phis.full_name is 'ФИО полностью';
+--comment on column fos.contragents_phis.name is 'ФИО';
+--comment on column fos.contragents_phis.lat_name is 'ФИО латиницей';
+--comment on column fos.contragents_phis.norm_name is 'Нормализованное произвольное наименование (в верхнем регистре)';
+--comment on column fos.contragents_phis.norm_lat_name is 'Нормализованное наименование на латинице (в верхнем регистре)';
+--comment on column fos.contragents_phis.short_name is 'ФИО кратко';
+--comment on column fos.contragents_phis.full_name is 'ФИО полностью';
 comment on column fos.contragents_phis.birth_date is 'Дата рождения';
 comment on column fos.contragents_phis.birth_place is 'Место рождения';
 comment on column fos.contragents_phis.death_date is 'Дата смерти';

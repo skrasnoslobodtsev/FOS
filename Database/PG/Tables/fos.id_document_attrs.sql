@@ -13,7 +13,7 @@ Change list:
 --if OBJECT_ID( 'dbo.[id_documents_attrs]', 'U') is NOT NULL
 --    drop table dbo.[id_documents_attrs];
 --go
-drop table fos.id_document_attrs cascade;
+drop table if exists fos.id_document_attrs cascade;
 /*
     Атрибуты:
         id                  - Уникальный идентификатор экземпляра

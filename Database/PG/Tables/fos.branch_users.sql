@@ -13,7 +13,7 @@ Change list:
 /* Удаляем, если есть */
 --if OBJECT_ID( 'dbo.branch_users', 'U') is NOT NULL
 --    drop table dbo.branch_users;
-drop table fos.branch_users cascade;
+drop table if exists fos.branch_users cascade;
 /*
     Атрибуты:
         id              - Уникальный идентификатор экземпляра

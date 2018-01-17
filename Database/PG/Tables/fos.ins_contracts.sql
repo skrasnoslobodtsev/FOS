@@ -8,12 +8,13 @@
 Change list:
 10.03.2017 Перепечко А.В. Допиливаем атрибуты объекта учёта "Договор страхования"
 12.08.2017 Перепечко А.В. Допиливаем атрибуты
-12.08.2017 Переносим на PG
+12.08.2017 Перепечко А.В. Переносим на PG
+17.01.2018 Перепечко А.В. Допиливаем атрибуты
 */
 --if OBJECT_ID( 'dbo.ins_contracts', 'U') is NOT NULL
 --    drop table dbo.ins_contracts
 --go
-drop table fos.ins_contracts cascade;
+drop table if exists fos.ins_contracts cascade;
 /*
     Атрибуты:
         id                      - Уникальный идентификатор экземпляра
@@ -22,7 +23,8 @@ drop table fos.ins_contracts cascade;
         ins_product_id          - Ссылка на страховой продукт
         ins_program_id          - Ссылка на программу страхования
         payment_frequency_id    - Ссылка на периодичность оплаты, справочник периодичностей оплаты
-        sub_state_id            - Ссылка на доп статус, dict_enum_items
+        pay_frequency_id        - Ссылка на периодичность выплат (пенсия/рента), справочник периодичностей выплат
+        state_id                - Ссылка на доп статус, dict_enum_items
 
         -- Атрибуты
         doc_serie               - Серия договора
@@ -51,7 +53,8 @@ create table fos.ins_contracts
     ins_product_id          bigint          NULL,
     ins_program_id          bigint          NULL,
     payment_frequency_id    bigint          NULL,
-    sub_state_id            bigint          NULL,
+    pay_frequency_id        bigint          null,
+    state_id                bigint          NULL,
 
     -- Атрибуты
     doc_serie               varchar(50)     NOT NULL,
@@ -79,6 +82,7 @@ create table fos.ins_contracts
     constraint ins_contracts_fk_ins_product foreign key( ins_product_id) references fos.dict_ins_products( id),
     constraint ins_contracts_fk_ins_program foreign key( ins_program_id) references fos.dict_ins_programs( id),
     constraint ins_contracts_fk_payment_frequency foreign key( payment_frequency_id) references fos.dict_ins_payment_frequencies( id),
+    constraint ins_contracts_fk_pay_frequency_id foreign key( pay_frequency_id) references fos.dict_ins_pay_frequencies( id),
     constraint ins_contracts_fk_cu_id foreign key( cu_id) references fos.sys_users( id),
     -- Ограничения проверки
     constraint ins_contracts_ch_rf check( recurrent_flag in ( 0, 1)),
